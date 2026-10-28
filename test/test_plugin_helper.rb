@@ -14,6 +14,7 @@ def setup_default_netbox_settings(netbox_url: 'https://netbox.example.com', netb
   Setting[:netbox_api_token] = netbox_api_token
   Setting[:netbox_orchestration_enabled] = true
   Setting[:netbox_skip_site_update] = false
+  Setting[:netbox_disk_base_unit] = 1000
 end
 
 def setup_netbox_integration_test

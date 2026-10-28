@@ -12,6 +12,7 @@ class FindClusterTest < ActiveSupport::TestCase
   let(:host) do
     FactoryBot.build_stubbed(:host, hostname: 'host.dev.example.com').tap do |host|
       host.stubs(:compute?).returns(true)
+      host.stubs(:compute_resource).returns(OpenStruct.new(type: 'Foreman::Model::Vmware'))
       host.stubs(:compute_object).returns(
         OpenStruct.new(cluster: 'CLUSTER')
       )
@@ -24,7 +25,7 @@ class FindClusterTest < ActiveSupport::TestCase
 
   context 'when cluster exists in Netbox' do
     it 'assigns cluster to context' do
-      stub_get = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/clusters.json").with(
+      stub_get = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/clusters/").with(
         query: { limit: 50, name: host.compute_object.cluster }
       ).to_return(
         status: 200, headers: { 'Content-Type': 'application/json' },
@@ -41,7 +42,7 @@ class FindClusterTest < ActiveSupport::TestCase
 
   context 'when cluster does not exist in NetBox' do
     it 'does not assign cluster to context' do
-      stub_get = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/clusters.json").with(
+      stub_get = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/clusters/").with(
         query: { limit: 50, name: host.compute_object.cluster }
       ).to_return(
         status: 200, headers: { 'Content-Type': 'application/json' },

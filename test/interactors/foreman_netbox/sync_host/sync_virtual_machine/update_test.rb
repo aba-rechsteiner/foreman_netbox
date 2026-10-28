@@ -26,7 +26,7 @@ class UpdateVirtualMachineTest < ActiveSupport::TestCase
           'tenant' => { 'id' => 1 },
           'vcpus' => 2,
           'memory' => 128,
-          'disk' => 512,
+          'disk' => 512_000,
           'primary_ip4' => {
             'id' => 1,
             'family' => 4,
@@ -73,12 +73,13 @@ class UpdateVirtualMachineTest < ActiveSupport::TestCase
       ip6: primary_ip6.address.address
     ).tap do |host|
       host.stubs(:compute?).returns(true)
+      host.stubs(:compute_resource).returns(OpenStruct.new(type: 'Foreman::Model::Vmware'))
       host.stubs(:compute_object).returns(
         OpenStruct.new(
           cpus: virtual_machine_data[:vcpus],
           memory_mb: virtual_machine_data[:memory],
           volumes: [
-            OpenStruct.new(size_gb: virtual_machine_data[:disk]),
+            OpenStruct.new(size_gb: virtual_machine_data[:disk] / 1000),
           ]
         )
       )
@@ -87,7 +88,7 @@ class UpdateVirtualMachineTest < ActiveSupport::TestCase
 
   setup do
     setup_default_netbox_settings
-    stub_request(:get, "#{Setting[:netbox_url]}/api/ipam/ip-addresses.json").with(
+    stub_request(:get, "#{Setting[:netbox_url]}/api/ipam/ip-addresses/").with(
       query: { limit: 50, virtual_machine_id: virtual_machine.id }
     ).to_return(
       status: 200, headers: { 'Content-Type': 'application/json' },
@@ -137,6 +138,7 @@ class UpdateVirtualMachineTest < ActiveSupport::TestCase
         ip6: primary_ip6.address.address
       ).tap do |host|
         host.stubs(:compute?).returns(true)
+        host.stubs(:compute_resource).returns(OpenStruct.new(type: 'Foreman::Model::Vmware'))
         host.stubs(:compute_object).returns(
           OpenStruct.new(
             cpus: 4,
@@ -150,11 +152,11 @@ class UpdateVirtualMachineTest < ActiveSupport::TestCase
     end
 
     it 'updates virtual_machine' do
-      stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/virtualization/virtual-machines/#{virtual_machine.id}.json").with(
+      stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/virtualization/virtual-machines/#{virtual_machine.id}/").with(
         body: {
           name: host.name,
           cluster: cluster.id,
-          disk: host.compute_object.volumes.map(&:size_gb).reduce(&:+),
+          disk: host.compute_object.volumes.map(&:size_gb).reduce(&:+) * 1000,
           memory: host.compute_object.memory_mb,
           primary_ip4: primary_ip4.id,
           primary_ip6: primary_ip6.id,

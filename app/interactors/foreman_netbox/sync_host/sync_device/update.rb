@@ -8,7 +8,7 @@ module ForemanNetbox
         include ForemanNetbox::Concerns::PrimaryIps
         include ForemanNetbox::Concerns::AssignTags
 
-        ATTRIBUTES = %i[name device_role device_type primary_ip4 primary_ip6 site tenant serial].freeze
+        ATTRIBUTES = %i[name role device_type primary_ip4 primary_ip6 site tenant serial].freeze
 
         around do |interactor|
           interactor.call if context.device
@@ -45,8 +45,9 @@ module ForemanNetbox
           device.name = new_device_params[:name] if device.name != new_device_params[:name]
         end
 
-        def assign_device_role
-          device.device_role = device_role&.id if device.device_role&.id != device_role&.id
+        # netbox-client-ruby has no object mapping for the `role` field (Netbox >= 4.0), so it is a plain hash
+        def assign_role
+          device.role = device_role&.id if device['role']&.dig('id') != device_role&.id
         end
 
         def assign_device_type

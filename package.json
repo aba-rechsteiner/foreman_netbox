@@ -1,0 +1,29 @@
+{
+  "name": "foreman_netbox",
+  "version": "1.0.0",
+  "description": "Adds integration with NetBox",
+  "main": "index.js",
+  "scripts": {
+    "lint": "tfm-lint --plugin -d /webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dm-drogeriemarkt/foreman_netbox.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dm-drogeriemarkt/foreman_netbox/issues"
+  },
+  "license": "GPL-3.0",
+  "peerDependencies": {
+    "@theforeman/vendor": ">= 15.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.0",
+    "@theforeman/builder": ">= 15.0.0",
+    "@theforeman/eslint-plugin-foreman": ">= 15.0.0",
+    "@theforeman/vendor-dev": ">= 15.0.0",
+    "babel-eslint": "^10.0.3",
+    "eslint": "^6.7.2",
+    "prettier": "^1.19.1"
+  }
+}

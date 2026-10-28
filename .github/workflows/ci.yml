@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   rubocop:
-    uses: theforeman/actions/.github/workflows/rubocop.yml@v0
+    uses: theforeman/actions/.github/workflows/rubocop.yml@v1
     with:
       command: bundle exec rubocop --parallel --format github
 
@@ -24,8 +24,7 @@ jobs:
       matrix:
         foreman:
           - "develop"
-          - "3.14-stable"
-          - "3.13-stable"
+          - "5.0-stable"
     uses: ./.github/workflows/foreman_plugin_netbox.yml
     with:
       plugin: foreman_netbox

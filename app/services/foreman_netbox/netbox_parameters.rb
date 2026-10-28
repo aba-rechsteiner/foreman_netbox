@@ -10,6 +10,14 @@ module ForemanNetbox
         name: 'VMware ESXi',
         slug: 'vmware-esxi',
       },
+      'Foreman::Model::Libvirt': {
+        name: 'Libvirt',
+        slug: 'libvirt',
+      },
+      'ForemanFogProxmox::Proxmox': {
+        name: 'Proxmox VE',
+        slug: 'proxmox-ve',
+      },
     }.freeze
     DEVICE_ROLE = {
       name: 'SERVER',
@@ -41,14 +49,7 @@ module ForemanNetbox
     delegate :cached_netbox_params, to: :netbox_facet
 
     def netbox_compute_attributes
-      @netbox_compute_attributes ||= host.compute_object.yield_self do |compute_object|
-        {
-          vcpus: compute_object&.cpus,
-          memory: compute_object&.memory_mb,
-          disk: compute_object&.volumes&.map(&:size_gb)&.reduce(&:+),
-          cluster: compute_object&.cluster,
-        }.compact
-      end
+      @netbox_compute_attributes ||= ForemanNetbox::ComputeAttributes.call(host)
     end
 
     def tenant
@@ -115,10 +116,9 @@ module ForemanNetbox
           {
             name: identifier || (mac_address && "Interface #{mac_address}"),
             mac_address: mac_address,
-            type: {
-              value: DEFAULT_INTERFACE_TYPE,
-            },
-          }
+            # Netbox virtual machine interfaces do not have a type
+            type: ({ value: DEFAULT_INTERFACE_TYPE } unless host.compute?),
+          }.compact
         end,
       }
     end

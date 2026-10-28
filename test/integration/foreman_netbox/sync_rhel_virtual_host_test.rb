@@ -59,13 +59,13 @@ class SyncRhelVirtualHostTest < ActiveSupport::TestCase
 
     assert subject.success?
 
-    assert_equal host.name,                                 subject.virtual_machine.name
-    assert_equal host.owner.netbox_tenant_name,             subject.virtual_machine.tenant.name
-    assert_equal host.compute_object.cpus.to_f,             subject.virtual_machine.vcpus
-    assert_equal host.compute_object.memory_mb,             subject.virtual_machine.memory
-    assert_equal host.compute_object.volumes.first.size_gb, subject.virtual_machine.disk
-    assert_equal host.compute_object.cluster,               subject.virtual_machine.cluster.name
-    assert_equal 'VMware ESXi',                             subject.cluster_type.name
+    assert_equal host.name,                                        subject.virtual_machine.name
+    assert_equal host.owner.netbox_tenant_name,                    subject.virtual_machine.tenant.name
+    assert_equal host.compute_object.cpus.to_f,                    subject.virtual_machine.vcpus
+    assert_equal host.compute_object.memory_mb,                    subject.virtual_machine.memory
+    assert_equal host.compute_object.volumes.first.size_gb * 1000, subject.virtual_machine.disk
+    assert_equal host.compute_object.cluster,                      subject.virtual_machine.cluster.name
+    assert_equal 'VMware ESXi',                                    subject.cluster_type.name
 
     assert_equal IPAddress.parse("#{host.ip}/24"),  subject.virtual_machine.primary_ip4.address
     assert_equal IPAddress.parse("#{host.ip6}/64"), subject.virtual_machine.primary_ip6.address
@@ -75,11 +75,13 @@ class SyncRhelVirtualHostTest < ActiveSupport::TestCase
       assert nx_interface.present?
 
       h_interface.netbox_ips.each do |h_ip|
-        assert subject.ip_addresses.find do |nx_ip|
-          nx_ip.interface.assigned_object_type == 'virtualization.vminterface' &&
-            nx_ip.interface.assigned_object_id == nx_interface.id &&
-            nx_ip.address == IPAddress.parse(h_ip)
-        end.present?
+        nx_ip = subject.ip_addresses.find do |ip|
+          ip['assigned_object_type'] == 'virtualization.vminterface' &&
+            ip['assigned_object_id'] == nx_interface.id &&
+            ip.address == IPAddress.parse(h_ip)
+        end
+
+        assert nx_ip.present?
       end
     end
 

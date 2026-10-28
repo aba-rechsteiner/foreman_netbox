@@ -26,7 +26,7 @@ module ForemanNetbox
         def params
           netbox_params.fetch(:device).merge(
             device_type: device_type.id,
-            device_role: device_role.id,
+            role: device_role.id,
             site: site.id,
             tenant: tenant&.id,
             tags: default_tag_ids

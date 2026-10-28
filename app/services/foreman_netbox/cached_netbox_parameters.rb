@@ -29,7 +29,7 @@ module ForemanNetbox
 
       result[:interfaces] = data.fetch(:interfaces, {}).fetch(:results, []).map do |interface|
         interface.slice(:name, :mac_address)
-                 .merge(type: interface.fetch(:type, {}).slice(:value))
+                 .merge(type: interface[:type]&.slice(:value))
                  .compact
       end
     end
@@ -39,7 +39,7 @@ module ForemanNetbox
 
       result[:ip_addresses] = data.fetch(:ip_addresses, {}).fetch(:results, []).map do |ip_address|
         ip_address.slice(:address)
-                  .merge(interface: ip_address.fetch(:interface, {}).slice(:name))
+                  .merge(interface: (ip_address[:assigned_object] || {}).slice(:name))
       end
     end
 

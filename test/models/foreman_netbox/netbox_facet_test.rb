@@ -26,10 +26,10 @@ module ForemanNetbox
             location: FactoryBot.build_stubbed(:location, name: site_name),
             interfaces: interfaces.map do |interface|
               ip4 = ip_addresses.find do |ip|
-                ip[:interface][:name] == interface[:name] && ip[:family][:value] == 4
+                ip[:assigned_object][:name] == interface[:name] && ip[:family][:value] == 4
               end
               ip6 = ip_addresses.find do |ip|
-                ip[:interface][:name] == interface[:name] && ip[:family][:value] == 6
+                ip[:assigned_object][:name] == interface[:name] && ip[:family][:value] == 6
               end
 
               FactoryBot.build_stubbed(
@@ -121,10 +121,10 @@ module ForemanNetbox
             owner: FactoryBot.build_stubbed(:usergroup, name: tenant_name),
             interfaces: interfaces.map do |interface|
               ip4 = ip_addresses.find do |ip|
-                ip[:interface][:name] == interface[:name] && ip[:family][:value] == 4
+                ip[:assigned_object][:name] == interface[:name] && ip[:family][:value] == 4
               end
               ip6 = ip_addresses.find do |ip|
-                ip[:interface][:name] == interface[:name] && ip[:family][:value] == 6
+                ip[:assigned_object][:name] == interface[:name] && ip[:family][:value] == 6
               end
 
               FactoryBot.build_stubbed(
@@ -151,8 +151,8 @@ module ForemanNetbox
                 cpus: vcpus,
                 memory_mb: memory,
                 volumes: [
-                  OpenStruct.new(size_gb: disk / 2),
-                  OpenStruct.new(size_gb: disk / 2),
+                  OpenStruct.new(size_gb: disk / 2000),
+                  OpenStruct.new(size_gb: disk / 2000),
                 ]
               )
             )

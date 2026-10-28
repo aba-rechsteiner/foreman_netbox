@@ -31,7 +31,7 @@ class UpdateVirtualMachineInterfacesTest < ActiveSupport::TestCase
     let(:new_mac) { 'FE:13:C6:44:29:24' }
 
     it 'updates interface in Netbox' do
-      get_stub = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/interfaces.json").with(
+      get_stub = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/interfaces/").with(
         query: { limit: 50 }
       ).to_return(
         status: 200, headers: { 'Content-Type': 'application/json' },
@@ -47,7 +47,7 @@ class UpdateVirtualMachineInterfacesTest < ActiveSupport::TestCase
           ],
         }.to_json
       )
-      stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/virtualization/interfaces/1.json").with(
+      stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/virtualization/interfaces/1/").with(
         body: {
           mac_address: host.interfaces.first.mac.upcase,
           tags: default_tags.map(&:id),
@@ -56,16 +56,25 @@ class UpdateVirtualMachineInterfacesTest < ActiveSupport::TestCase
         status: 200, headers: { 'Content-Type': 'application/json' },
         body: { id: 1 }.to_json
       )
+      get_mac_stub = stub_request(:get, "#{Setting[:netbox_url]}/api/dcim/mac-addresses/").with(
+        query: { limit: 50, vminterface_id: 1, mac_address: new_mac }
+      ).to_return(
+        status: 200, headers: { 'Content-Type': 'application/json' },
+        body: { count: 1, results: [{ id: 2, mac_address: new_mac }] }.to_json
+      )
+      delete_mac_stub = stub_request(:delete, "#{Setting[:netbox_url]}/api/dcim/mac-addresses/2/").to_return(status: 204)
 
       subject
       assert_requested(get_stub)
       assert_requested(stub_patch)
+      assert_requested(get_mac_stub)
+      assert_requested(delete_mac_stub)
     end
   end
 
   context 'if the interface has not been updated since the last synchronization' do
     it 'does not update interface on Netbox' do
-      get_stub = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/interfaces.json").with(
+      get_stub = stub_request(:get, "#{Setting[:netbox_url]}/api/virtualization/interfaces/").with(
         query: { limit: 50 }
       ).to_return(
         status: 200, headers: { 'Content-Type': 'application/json' },
@@ -83,7 +92,7 @@ class UpdateVirtualMachineInterfacesTest < ActiveSupport::TestCase
           ],
         }.to_json
       )
-      stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/virtualization/interfaces/1.json")
+      stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/virtualization/interfaces/1/")
 
       subject
       assert_requested(get_stub)

@@ -18,6 +18,7 @@ class CreateClusterTest < ActiveSupport::TestCase
   let(:host) do
     FactoryBot.build_stubbed(:host).tap do |host|
       host.stubs(:compute?).returns(true)
+      host.stubs(:compute_resource).returns(OpenStruct.new(type: 'Foreman::Model::Vmware'))
       host.stubs(:compute_object).returns(
         OpenStruct.new(cluster: 'CLUSTER')
       )

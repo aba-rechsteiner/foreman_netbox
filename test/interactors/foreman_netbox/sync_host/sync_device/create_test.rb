@@ -42,7 +42,7 @@ class CreateDeviceTest < ActiveSupport::TestCase
           name: netbox_device_params[:name],
           serial: netbox_device_params[:serial],
           device_type: device_type.id,
-          device_role: device_role.id,
+          role: device_role.id,
           site: site.id,
           tenant: tenant.id,
           tags: tags.map(&:id),

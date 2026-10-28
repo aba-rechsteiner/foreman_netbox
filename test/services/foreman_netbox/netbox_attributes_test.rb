@@ -153,6 +153,32 @@ module ForemanNetbox
       end
 
       it { assert_equal expected, host.netbox_facet.netbox_params.fetch(:interfaces) }
+
+      context 'when the host is a virtual machine' do
+        setup do
+          host.stubs(:compute?).returns(true)
+        end
+
+        it 'does not set the interface type' do
+          assert_equal [expected.first.except(:type)], host.netbox_facet.netbox_params.fetch(:interfaces)
+        end
+      end
+
+      context 'when the interface has no mac address' do
+        let(:host) do
+          FactoryBot.build_stubbed(
+            :host,
+            :managed,
+            interfaces: [
+              FactoryBot.build_stubbed(:nic_base, identifier: expected.first[:name], mac: nil),
+            ]
+          )
+        end
+
+        it 'does not set the mac address' do
+          assert_equal [expected.first.except(:mac_address)], host.netbox_facet.netbox_params.fetch(:interfaces)
+        end
+      end
     end
 
     describe '#ip_addresses' do
@@ -207,13 +233,14 @@ module ForemanNetbox
       let(:host) do
         FactoryBot.build_stubbed(:host, :managed, hostname: expected[:name]).tap do |host|
           host.stubs(:compute?).returns(true)
+          host.stubs(:compute_resource).returns(OpenStruct.new(type: 'Foreman::Model::Vmware'))
           host.stubs(:compute_object).returns(
             OpenStruct.new(
               cpus: expected[:vcpus],
               memory_mb: expected[:memory],
               volumes: [
-                OpenStruct.new(size_gb: expected[:disk] / 2),
-                OpenStruct.new(size_gb: expected[:disk] / 2),
+                OpenStruct.new(size_gb: expected[:disk] / 2000),
+                OpenStruct.new(size_gb: expected[:disk] / 2000),
               ]
             )
           )
@@ -225,17 +252,26 @@ module ForemanNetbox
           name: 'virtual_machine_name',
           vcpus: 2,
           memory: 128,
-          disk: 20,
+          disk: 20_000,
         }
       end
 
       it { assert_equal expected, host.netbox_facet.netbox_params.fetch(:virtual_machine) }
+
+      context 'when the Netbox disk base unit is 1024' do
+        setup do
+          Setting[:netbox_disk_base_unit] = 1024
+        end
+
+        it { assert_equal expected.merge(disk: 20_480), host.netbox_facet.netbox_params.fetch(:virtual_machine) }
+      end
     end
 
     describe '#cluster' do
       let(:host) do
         FactoryBot.build_stubbed(:host, :managed).tap do |host|
           host.stubs(:compute?).returns(true)
+          host.stubs(:compute_resource).returns(OpenStruct.new(type: 'Foreman::Model::Vmware'))
           host.stubs(:compute_object).returns(
             OpenStruct.new(cluster: expected[:name])
           )
@@ -250,11 +286,12 @@ module ForemanNetbox
     end
 
     describe '#cluster_type' do
+      let(:compute_resource_type) { 'Foreman::Model::Vmware' }
       let(:host) do
         FactoryBot.build_stubbed(:host, :managed).tap do |host|
           host.stubs(:compute?).returns(true)
           host.stubs(:compute_resource).returns(
-            OpenStruct.new(type: 'Foreman::Model::Vmware')
+            OpenStruct.new(type: compute_resource_type)
           )
         end
       end
@@ -264,6 +301,18 @@ module ForemanNetbox
       end
 
       it { assert_equal expected, host.netbox_facet.netbox_params.fetch(:cluster_type) }
+
+      context 'with a Libvirt compute resource' do
+        let(:compute_resource_type) { 'Foreman::Model::Libvirt' }
+
+        it { assert_equal({ name: 'Libvirt', slug: 'libvirt' }, host.netbox_facet.netbox_params.fetch(:cluster_type)) }
+      end
+
+      context 'with a Proxmox compute resource' do
+        let(:compute_resource_type) { 'ForemanFogProxmox::Proxmox' }
+
+        it { assert_equal({ name: 'Proxmox VE', slug: 'proxmox-ve' }, host.netbox_facet.netbox_params.fetch(:cluster_type)) }
+      end
     end
   end
 end

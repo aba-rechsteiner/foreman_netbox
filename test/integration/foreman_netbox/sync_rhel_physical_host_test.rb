@@ -53,6 +53,7 @@ class SyncRhelPhysicalHostTest < ActiveSupport::TestCase
     assert_equal host.facts['manufacturer'],        subject.device.device_type.manufacturer.name
     assert_equal host.facts['productname'],         subject.device.device_type.model
     assert_equal host.facts['serialnumber'],        subject.device.serial
+    assert_equal subject.device_role.id,            subject.device['role']['id']
 
     assert_equal IPAddress.parse("#{host.ip}/24"),  subject.device.primary_ip4.address
     assert_equal IPAddress.parse("#{host.ip6}/64"), subject.device.primary_ip6.address
@@ -62,11 +63,13 @@ class SyncRhelPhysicalHostTest < ActiveSupport::TestCase
       assert nx_interface.present?
 
       h_interface.netbox_ips.each do |h_ip|
-        assert subject.ip_addresses.find do |nx_ip|
-          nx_ip.interface.assigned_object_type == 'dcim.interface' &&
-            nx_ip.interface.assigned_object_id == nx_interface.id &&
-            nx_ip.address == IPAddress.parse(h_ip)
-        end.present?
+        nx_ip = subject.ip_addresses.find do |ip|
+          ip['assigned_object_type'] == 'dcim.interface' &&
+            ip['assigned_object_id'] == nx_interface.id &&
+            ip.address == IPAddress.parse(h_ip)
+        end
+
+        assert nx_ip.present?
       end
     end
 

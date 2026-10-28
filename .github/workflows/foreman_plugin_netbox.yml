@@ -1,5 +1,7 @@
+# Copy of https://github.com/theforeman/actions/blob/v1/.github/workflows/foreman_plugin.yml
+# that starts a Netbox instance (netbox-docker) for the integration tests.
 ---
-name: Foreman Plugin
+name: Foreman Plugin with Netbox
 
 on:
   workflow_call:
@@ -45,6 +47,10 @@ on:
         description: Test plugin database migrations and seeds on an existing Foreman database
         default: true
         type: boolean
+      test_core_tests:
+        description: Run a predefined set of tests from core to ensure integration
+        default: true
+        type: boolean
       environment_variables:
         description: arbitrary environment variables from caller
         required: false
@@ -55,6 +61,16 @@ on:
         required: false
         default: 60
         type: number
+      runner:
+        description: Runner label to use for all jobs
+        required: false
+        default: ubuntu-latest
+        type: string
+      additional_packages:
+        description: String of additional packages that should be installed
+        default: ''
+        required: false
+        type: string
 
 env:
   RAILS_ENV: test
@@ -63,12 +79,12 @@ env:
   DATABASE_CLEANER_ALLOW_REMOTE_DATABASE_URL: true
   BUNDLE_WITHOUT: "console:development:journald:libvirt"
   FOREMAN_NETBOX_URL: http://0.0.0.0:8000
-  FOREMAN_NETBOX_TOKEN: 0123456789abcdef0123456789abcdef01234567
+  FOREMAN_NETBOX_TOKEN: nbt_0123456789ab.0123456789abcdef0123456789abcdef01234567
 
 jobs:
   setup_matrix:
     name: Setup matrix
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     outputs:
       matrix: ${{ steps.build_matrix.outputs.matrix }}
     steps:
@@ -84,7 +100,7 @@ jobs:
   test:
     name: "${{ matrix.task }} - Foreman ${{ inputs.foreman_version }} with Ruby ${{ matrix.ruby }} and Node ${{ matrix.node }} on PostgreSQL ${{ matrix.postgresql }}"
     needs: setup_matrix
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: ${{ inputs.timeout_minutes }}
     services:
       postgres:
@@ -108,50 +124,58 @@ jobs:
     steps:
       - name: Load environment variables from caller
         run: echo "${{ inputs.environment_variables }}" >> $GITHUB_ENV
+      - name: Disable manpage generation
+        run: |
+          echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
+          sudo dpkg-reconfigure man-db
       - run: sudo apt-get update
-      - run: sudo apt-get install -y build-essential libcurl4-openssl-dev zlib1g-dev libpq-dev
-      - uses: actions/checkout@v4
+      - run: sudo apt-get install -y build-essential libcurl4-openssl-dev zlib1g-dev libpq-dev libcap-dev
+      - name: install additional packages
+        if: ${{ inputs.additional_packages != '' }}
+        run: sudo apt-get install -y ${{ inputs.additional_packages }}
+      - name: Check out netbox-docker
+        if: ${{ contains(matrix.task, 'test:') }}
+        uses: actions/checkout@v7
         with:
           repository: netbox-community/netbox-docker
           path: netbox-docker
       - name: Setup Netbox
+        if: ${{ contains(matrix.task, 'test:') }}
         working-directory: netbox-docker
         run: |
           tee docker-compose.override.yml <<EOF
           services:
             netbox:
-              image: netboxcommunity/netbox:v3.5-2.6.1
+              image: docker.io/netboxcommunity/netbox:v4.7-5.1.1
               ports:
-              - 8000:8080
+                - 8000:8080
               healthcheck:
-                test: curl -f http://localhost:8080/login/ || exit 1
+                # the first start runs all database migrations
                 start_period: 300s
-                timeout: 10s
-                interval: 30s
               environment:
-                SKIP_SUPERUSER: false
-                SUPERUSER_API_TOKEN: 0123456789abcdef0123456789abcdef01234567
+                SKIP_SUPERUSER: "false"
+                SUPERUSER_API_KEY: "0123456789ab"
+                SUPERUSER_API_TOKEN: "0123456789abcdef0123456789abcdef01234567"
                 SUPERUSER_EMAIL: admin@example.com
                 SUPERUSER_NAME: admin
                 SUPERUSER_PASSWORD: admin
           EOF
           docker compose up -d --quiet-pull netbox netbox-worker postgres redis redis-cache
-          docker container ls 
-      - name: Wait for NetBox to be available
-        run: |
           docker container ls
-          docker logs netbox-docker-netbox-1
-          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 0.0.0.0:8000/login/)" != "200" ]]; do echo "waiting for NetBox"; sleep 5; done' || false
+      - name: Wait for NetBox to be available
+        if: ${{ contains(matrix.task, 'test:') }}
         working-directory: netbox-docker
+        run: |
+          timeout 300 bash -c 'while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' 0.0.0.0:8000/login/)" != "200" ]]; do echo "waiting for NetBox"; sleep 5; done' || (docker compose logs netbox; false)
       - name: generate artifact suffix
-        run: echo "ARTIFACT_SUFFIX=$(echo 'ruby-${{ matrix.ruby }}-node-${{ matrix.node }}-pg-${{ matrix.postgresql }}-foreman-${{ inputs.foreman_version }}-${{ matrix.task }}' | tr -cd '[:alnum:]-')" >> "${GITHUB_ENV}"
+        run: echo "ARTIFACT_SUFFIX=$(echo '${{ inputs.plugin }}-ruby-${{ matrix.ruby }}-node-${{ matrix.node }}-pg-${{ matrix.postgresql }}-foreman-${{ inputs.foreman_version }}-${{ matrix.task }}' | tr -cd '[:alnum:]-')" >> "${GITHUB_ENV}"
       - name: "Check out Foreman ${{ inputs.foreman_version }}"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.foreman_repository }}
           ref: ${{ inputs.foreman_version }}
       - name: Check out plugin
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.plugin_repository }}
           ref: ${{ inputs.plugin_version }}
@@ -168,17 +192,17 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
       - name: Archive Gemfile.lock
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: Gemfile-${{ env.ARTIFACT_SUFFIX }}.lock
           path: Gemfile.lock
       - name: "Set up Node ${{ matrix.node }}"
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node }}
       - name: Setup NPM Cache
         if: ${{ hashFiles(format('{0}/package.json', inputs.plugin), format('{0}/test/integration/**', inputs.plugin)) != '' && !contains(matrix.task, 'seed') }}
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ matrix.node }}-${{ hashFiles('**/package.json') }}
@@ -192,7 +216,7 @@ jobs:
         run: bundle exec npm ci --no-audit
       - name: Archive package-lock.json
         if: ${{ hashFiles(format('{0}/package.json', inputs.plugin), format('{0}/test/integration/**', inputs.plugin)) != '' && !contains(matrix.task, 'seed') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-lock-${{ env.ARTIFACT_SUFFIX }}.json
           path: |
@@ -209,7 +233,7 @@ jobs:
           bundle exec rake webpack:compile
       - name: Archive all_react_app_exports
         if: ${{ hashFiles(format('{0}/package.json', inputs.plugin), format('{0}/test/integration/**', inputs.plugin)) != '' && contains(matrix.task, 'test') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: all_react_app_exports-${{ env.ARTIFACT_SUFFIX }}.js
           path: webpack/assets/javascripts/all_react_app_exports.js
@@ -218,8 +242,16 @@ jobs:
         if: ${{ contains(matrix.task, 'nulldb') }}
       - name: Run rake ${{ matrix.task }}
         run: bundle exec rake ${{ matrix.task }}
+      - name: Run extra core tests
+        if: ${{ contains(matrix.task, 'test') && inputs.test_core_tests }}
+        run: |
+          if bundle exec rake -T | grep -q 'test:core_tests'; then
+            bundle exec rake test:core_tests
+          else
+            bundle exec rake test TEST="test/unit/foreman/access_permissions_test.rb"
+          fi
       - name: Upload logs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: ${{ failure() && contains(matrix.task, 'test') }}
         with:
           name: logs-${{ env.ARTIFACT_SUFFIX }}
@@ -230,7 +262,7 @@ jobs:
     name: "Existing database - Foreman ${{ inputs.foreman_version }} with Ruby ${{ matrix.ruby }} and Node ${{ matrix.node }} on PostgreSQL ${{ matrix.postgresql }}"
     if: ${{ inputs.test_existing_database }}
     needs: setup_matrix
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     timeout-minutes: ${{ inputs.timeout_minutes }}
     services:
       postgres:
@@ -252,10 +284,18 @@ jobs:
     steps:
       - name: Load environment variables from caller
         run: echo "${{ inputs.environment_variables }}" >> $GITHUB_ENV
+      - name: Disable manpage generation
+        run: |
+          echo "man-db man-db/auto-update boolean false" | sudo debconf-set-selections
+          sudo dpkg-reconfigure man-db
       - run: sudo apt-get update
-      - run: sudo apt-get install -y build-essential libcurl4-openssl-dev zlib1g-dev libpq-dev
+      - run: sudo apt-get install -y build-essential libcurl4-openssl-dev zlib1g-dev libpq-dev libcap-dev
+
+      - name: install additional packages
+        if: ${{ inputs.additional_packages != '' }}
+        run: sudo apt-get install -y ${{ inputs.additional_packages }}
       - name: "Check out Foreman ${{ inputs.foreman_version }}"
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.foreman_repository }}
           ref: ${{ inputs.foreman_version }}
@@ -270,7 +310,7 @@ jobs:
           bundle exec rake db:migrate
           bundle exec rake db:seed
       - name: Check out plugin
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: ${{ inputs.plugin_repository }}
           ref: ${{ inputs.plugin_version }}
@@ -294,7 +334,7 @@ jobs:
     needs:
       - test
       - existing-database
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.runner }}
     name: Test suite
     steps:
       - name: Decide whether the needed jobs succeeded or failed

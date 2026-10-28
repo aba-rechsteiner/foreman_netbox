@@ -1,55 +1,101 @@
 {
   "tenant": {
-    "id": 89,
+    "id": 2,
+    "url": "http://0.0.0.0:8000/api/tenancy/tenants/2/",
+    "display_url": "http://0.0.0.0:8000/tenancy/tenants/2/",
+    "display": "Owner",
     "name": "Owner",
     "slug": "owner",
     "group": null,
     "description": "",
+    "owner": null,
     "comments": "",
     "tags": [
-      "foreman"
+      {
+        "id": 1,
+        "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+        "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+        "display": "foreman",
+        "name": "foreman",
+        "slug": "foreman",
+        "color": "9e9e9e"
+      }
     ],
     "custom_fields": {},
-    "created": "2020-07-13",
-    "last_updated": "2020-07-13T14:11:51.206250Z",
-    "circuit_count": null,
-    "device_count": 1,
-    "ipaddress_count": null,
-    "prefix_count": null,
-    "rack_count": null,
-    "site_count": null,
+    "created": "2026-10-28T07:28:39.590694Z",
+    "last_updated": "2026-10-28T07:28:39.590702Z",
+    "circuit_count": 0,
+    "device_count": 2,
+    "ipaddress_count": 0,
+    "prefix_count": 0,
+    "rack_count": 0,
+    "site_count": 0,
     "virtualmachine_count": 1,
-    "vlan_count": null,
-    "vrf_count": null
+    "vlan_count": 0,
+    "vrf_count": 0,
+    "cluster_count": 0
   },
   "cluster_type": {
     "id": 2,
+    "url": "http://0.0.0.0:8000/api/virtualization/cluster-types/2/",
+    "display_url": "http://0.0.0.0:8000/virtualization/cluster-types/2/",
+    "display": "VMware ESXi",
     "name": "VMware ESXi",
     "slug": "vmware-esxi",
     "description": "",
+    "owner": null,
+    "comments": "",
+    "tags": [],
+    "custom_fields": {},
+    "created": "2026-10-28T07:28:39.637378Z",
+    "last_updated": "2026-10-28T07:28:39.637386Z",
     "cluster_count": 1
   },
   "cluster": {
     "id": 2,
+    "url": "http://0.0.0.0:8000/api/virtualization/clusters/2/",
+    "display_url": "http://0.0.0.0:8000/virtualization/clusters/2/",
+    "display": "CLUSTER",
     "name": "CLUSTER",
     "type": {
       "id": 2,
-      "url": "http://0.0.0.0:8000/api/virtualization/cluster-types/2.json",
+      "url": "http://0.0.0.0:8000/api/virtualization/cluster-types/2/",
+      "display": "VMware ESXi",
       "name": "VMware ESXi",
-      "slug": "vmware-esxi"
+      "slug": "vmware-esxi",
+      "description": ""
     },
     "group": null,
+    "status": {
+      "value": "active",
+      "label": "Active"
+    },
     "tenant": null,
-    "site": null,
+    "scope_type": null,
+    "scope_id": null,
+    "scope": null,
+    "description": "",
+    "owner": null,
     "comments": "",
     "tags": [
-      "foreman"
+      {
+        "id": 1,
+        "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+        "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+        "display": "foreman",
+        "name": "foreman",
+        "slug": "foreman",
+        "color": "9e9e9e"
+      }
     ],
     "custom_fields": {},
-    "created": "2020-07-13",
-    "last_updated": "2020-07-13T14:11:55.974856Z",
-    "device_count": null,
-    "virtualmachine_count": 1
+    "created": "2026-10-28T07:28:39.693754Z",
+    "last_updated": "2026-10-28T07:28:39.693771Z",
+    "device_count": 0,
+    "virtualmachine_count": 1,
+    "allocated_vcpus": 1.0,
+    "allocated_memory": 1024,
+    "allocated_disk": 120000
   },
   "ip_addresses": {
     "count": 2,
@@ -57,7 +103,10 @@
     "previous": null,
     "results": [
       {
-        "id": 17,
+        "id": 5,
+        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/5/",
+        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/5/",
+        "display": "10.0.0.9/24",
         "family": {
           "value": 4,
           "label": "IPv4"
@@ -67,34 +116,51 @@
         "tenant": null,
         "status": {
           "value": "active",
-          "label": "Active",
-          "id": 1
+          "label": "Active"
         },
         "role": null,
-        "interface": {
-          "id": 17,
-          "url": "http://0.0.0.0:8000/api/virtualization/interfaces/17/",
-          "device": null,
+        "assigned_object_type": "virtualization.vminterface",
+        "assigned_object_id": 2,
+        "assigned_object": {
+          "id": 2,
+          "url": "http://0.0.0.0:8000/api/virtualization/interfaces/2/",
+          "display": "eth0",
           "virtual_machine": {
-            "id": 3,
-            "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/3.json",
-            "name": "rhel_virtual_host.tier.example.com"
+            "id": 2,
+            "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/2/",
+            "display": "rhel_virtual_host.tier.example.com",
+            "name": "rhel_virtual_host.tier.example.com",
+            "description": ""
           },
-          "name": "eth0"
+          "name": "eth0",
+          "description": ""
         },
         "nat_inside": null,
-        "nat_outside": null,
+        "nat_outside": [],
         "dns_name": "",
         "description": "",
+        "owner": null,
+        "comments": "",
         "tags": [
-          "foreman"
+          {
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+            "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+            "display": "foreman",
+            "name": "foreman",
+            "slug": "foreman",
+            "color": "9e9e9e"
+          }
         ],
         "custom_fields": {},
-        "created": "2020-07-13",
-        "last_updated": "2020-07-13T14:58:09.007393Z"
+        "created": "2026-10-28T07:29:18.884444Z",
+        "last_updated": "2026-10-28T07:29:18.884454Z"
       },
       {
-        "id": 18,
+        "id": 6,
+        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/6/",
+        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/6/",
+        "display": "1600:0:2d0:202::19/64",
         "family": {
           "value": 6,
           "label": "IPv6"
@@ -104,31 +170,45 @@
         "tenant": null,
         "status": {
           "value": "active",
-          "label": "Active",
-          "id": 1
+          "label": "Active"
         },
         "role": null,
-        "interface": {
-          "id": 18,
-          "url": "http://0.0.0.0:8000/api/virtualization/interfaces/18/",
-          "device": null,
+        "assigned_object_type": "virtualization.vminterface",
+        "assigned_object_id": 3,
+        "assigned_object": {
+          "id": 3,
+          "url": "http://0.0.0.0:8000/api/virtualization/interfaces/3/",
+          "display": "eth1",
           "virtual_machine": {
-            "id": 3,
-            "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/3.json",
-            "name": "rhel_virtual_host.tier.example.com"
+            "id": 2,
+            "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/2/",
+            "display": "rhel_virtual_host.tier.example.com",
+            "name": "rhel_virtual_host.tier.example.com",
+            "description": ""
           },
-          "name": "eth1"
+          "name": "eth1",
+          "description": ""
         },
         "nat_inside": null,
-        "nat_outside": null,
+        "nat_outside": [],
         "dns_name": "",
         "description": "",
+        "owner": null,
+        "comments": "",
         "tags": [
-          "foreman"
+          {
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+            "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+            "display": "foreman",
+            "name": "foreman",
+            "slug": "foreman",
+            "color": "9e9e9e"
+          }
         ],
         "custom_fields": {},
-        "created": "2020-07-13",
-        "last_updated": "2020-07-13T14:58:09.116896Z"
+        "created": "2026-10-28T07:29:18.993448Z",
+        "last_updated": "2026-10-28T07:29:18.993461Z"
       }
     ]
   },
@@ -138,104 +218,228 @@
     "previous": null,
     "results": [
       {
-        "id": 17,
+        "id": 2,
+        "url": "http://0.0.0.0:8000/api/virtualization/interfaces/2/",
+        "display_url": "http://0.0.0.0:8000/virtualization/interfaces/2/",
+        "display": "eth0",
         "virtual_machine": {
-          "id": 3,
-          "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/3.json",
-          "name": "rhel_virtual_host.tier.example.com"
+          "id": 2,
+          "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/2/",
+          "display": "rhel_virtual_host.tier.example.com",
+          "name": "rhel_virtual_host.tier.example.com",
+          "description": ""
         },
         "name": "eth0",
-        "type": {
-          "value": "virtual",
-          "label": "Virtual"
-        },
         "enabled": true,
+        "parent": null,
+        "bridge": null,
         "mtu": null,
         "mac_address": "C3:CD:63:54:21:62",
+        "primary_mac_address": {
+          "id": 7,
+          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/7/",
+          "display": "C3:CD:63:54:21:62",
+          "mac_address": "C3:CD:63:54:21:62",
+          "description": ""
+        },
+        "mac_addresses": [
+          {
+            "id": 7,
+            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/7/",
+            "display": "C3:CD:63:54:21:62",
+            "mac_address": "C3:CD:63:54:21:62",
+            "description": ""
+          }
+        ],
         "description": "",
         "mode": null,
         "untagged_vlan": null,
         "tagged_vlans": [],
+        "qinq_svlan": null,
+        "vlan_translation_policy": null,
+        "vrf": null,
+        "l2vpn_termination": null,
+        "owner": null,
         "tags": [
-          "foreman"
-        ]
+          {
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+            "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+            "display": "foreman",
+            "name": "foreman",
+            "slug": "foreman",
+            "color": "9e9e9e"
+          }
+        ],
+        "custom_fields": {},
+        "created": "2026-10-28T07:28:39.853295Z",
+        "last_updated": "2026-10-28T07:28:39.871211Z",
+        "count_ipaddresses": 1,
+        "count_fhrp_groups": 0
       },
       {
-        "id": 18,
+        "id": 3,
+        "url": "http://0.0.0.0:8000/api/virtualization/interfaces/3/",
+        "display_url": "http://0.0.0.0:8000/virtualization/interfaces/3/",
+        "display": "eth1",
         "virtual_machine": {
-          "id": 3,
-          "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/3.json",
-          "name": "rhel_virtual_host.tier.example.com"
+          "id": 2,
+          "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/2/",
+          "display": "rhel_virtual_host.tier.example.com",
+          "name": "rhel_virtual_host.tier.example.com",
+          "description": ""
         },
         "name": "eth1",
-        "type": {
-          "value": "virtual",
-          "label": "Virtual"
-        },
         "enabled": true,
+        "parent": null,
+        "bridge": null,
         "mtu": null,
-        "mac_address": "45:E9:6A:83:02:22",
+        "mac_address": "45:E9:6A:83:02:23",
+        "primary_mac_address": {
+          "id": 14,
+          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/14/",
+          "display": "45:E9:6A:83:02:23",
+          "mac_address": "45:E9:6A:83:02:23",
+          "description": ""
+        },
+        "mac_addresses": [
+          {
+            "id": 14,
+            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/14/",
+            "display": "45:E9:6A:83:02:23",
+            "mac_address": "45:E9:6A:83:02:23",
+            "description": ""
+          }
+        ],
         "description": "",
         "mode": null,
         "untagged_vlan": null,
         "tagged_vlans": [],
+        "qinq_svlan": null,
+        "vlan_translation_policy": null,
+        "vrf": null,
+        "l2vpn_termination": null,
+        "owner": null,
         "tags": [
-          "foreman"
-        ]
+          {
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+            "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+            "display": "foreman",
+            "name": "foreman",
+            "slug": "foreman",
+            "color": "9e9e9e"
+          }
+        ],
+        "custom_fields": {},
+        "created": "2026-10-28T07:28:39.932277Z",
+        "last_updated": "2026-10-28T07:30:27.373082Z",
+        "count_ipaddresses": 1,
+        "count_fhrp_groups": 0
       }
     ]
   },
   "virtual_machine": {
-    "id": 3,
+    "id": 2,
+    "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/2/",
+    "display_url": "http://0.0.0.0:8000/virtualization/virtual-machines/2/",
+    "display": "rhel_virtual_host.tier.example.com",
     "name": "rhel_virtual_host.tier.example.com",
+    "virtual_machine_type": null,
+    "role": null,
     "status": {
       "value": "active",
-      "label": "Active",
-      "id": 1
+      "label": "Active"
+    },
+    "start_on_boot": {
+      "value": "off",
+      "label": "Off"
     },
     "site": null,
     "cluster": {
       "id": 2,
-      "url": "http://0.0.0.0:8000/api/virtualization/clusters/2.json",
-      "name": "CLUSTER"
+      "url": "http://0.0.0.0:8000/api/virtualization/clusters/2/",
+      "display": "CLUSTER",
+      "name": "CLUSTER",
+      "description": ""
     },
-    "role": null,
-    "tenant": {
-      "id": 89,
-      "url": "http://0.0.0.0:8000/api/tenancy/tenants/89.json",
-      "name": "Owner",
-      "slug": "owner"
-    },
+    "device": null,
     "platform": null,
     "primary_ip": {
-      "id": 18,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/18.json",
-      "family": 6,
-      "address": "1600:0:2d0:202::19/64"
+      "id": 6,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/6/",
+      "display": "1600:0:2d0:202::19/64",
+      "family": {
+        "value": 6,
+        "label": "IPv6"
+      },
+      "address": "1600:0:2d0:202::19/64",
+      "nat_inside": null,
+      "nat_outside": [],
+      "dns_name": "",
+      "description": ""
     },
     "primary_ip4": {
-      "id": 17,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/17.json",
-      "family": 4,
-      "address": "10.0.0.9/24"
+      "id": 5,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/5/",
+      "display": "10.0.0.9/24",
+      "family": {
+        "value": 4,
+        "label": "IPv4"
+      },
+      "address": "10.0.0.9/24",
+      "nat_inside": null,
+      "nat_outside": [],
+      "dns_name": "",
+      "description": ""
     },
     "primary_ip6": {
-      "id": 18,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/18.json",
-      "family": 6,
-      "address": "1600:0:2d0:202::19/64"
+      "id": 6,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/6/",
+      "display": "1600:0:2d0:202::19/64",
+      "family": {
+        "value": 6,
+        "label": "IPv6"
+      },
+      "address": "1600:0:2d0:202::19/64",
+      "nat_inside": null,
+      "nat_outside": [],
+      "dns_name": "",
+      "description": ""
     },
-    "vcpus": 1,
+    "vcpus": 1.0,
     "memory": 1024,
-    "disk": 120,
+    "disk": 120000,
+    "description": "",
+    "serial": "",
+    "tenant": {
+      "id": 2,
+      "url": "http://0.0.0.0:8000/api/tenancy/tenants/2/",
+      "display": "Owner",
+      "name": "Owner",
+      "slug": "owner",
+      "description": ""
+    },
+    "owner": null,
     "comments": "",
-    "local_context_data": null,
     "tags": [
-      "foreman"
+      {
+        "id": 1,
+        "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+        "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+        "display": "foreman",
+        "name": "foreman",
+        "slug": "foreman",
+        "color": "9e9e9e"
+      }
     ],
+    "local_context_data": null,
+    "config_template": null,
     "custom_fields": {},
-    "config_context": {},
-    "created": "2020-07-13",
-    "last_updated": "2020-07-13T14:58:09.546781Z"
+    "created": "2026-10-28T07:28:39.794947Z",
+    "last_updated": "2026-10-28T07:29:19.216928Z",
+    "interface_count": 2,
+    "virtual_disk_count": 0,
+    "config_context": {}
   }
 }

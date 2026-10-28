@@ -10,3 +10,7 @@ locale/*/*.edit.po
 locale/*/*.po.time_stamp
 locale/*/*.pox
 .DS_Store
+node_modules/
+package-lock.json
+public/assets/
+public/webpack/

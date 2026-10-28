@@ -4,7 +4,7 @@ module ForemanNetbox
   module Params
     InterfaceParams = Dry::Schema.Params do
       required(:name).filled(:string)
-      required(:type).filled(:hash) do
+      optional(:type).filled(:hash) do
         required(:value).filled(:string)
       end
       optional(:mac_address).maybe(:string)
