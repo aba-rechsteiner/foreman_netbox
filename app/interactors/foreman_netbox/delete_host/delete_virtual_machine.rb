@@ -6,7 +6,7 @@ module ForemanNetbox
       include ::Interactor
 
       around do |interactor|
-        interactor.call if context.host.compute?
+        interactor.call if context.host.netbox_virtual_machine?
       end
 
       def call

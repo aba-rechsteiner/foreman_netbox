@@ -36,6 +36,38 @@ module ForemanNetbox
       end
     end
 
+    describe '#netbox_virtual_machine?' do
+      let(:unmanaged_host) { FactoryBot.create(:host) }
+
+      it 'is a virtual machine, if the host is on a compute resource' do
+        unmanaged_host.stubs(:compute?).returns(true)
+
+        assert unmanaged_host.netbox_virtual_machine?
+      end
+
+      it 'is a device, if the host is not on a compute resource' do
+        unmanaged_host.stubs(:compute?).returns(false)
+
+        assert_not unmanaged_host.netbox_virtual_machine?
+      end
+
+      it 'can be set to device with the parameter netbox_object_type' do
+        FactoryBot.create(:host_parameter, host: unmanaged_host, name: 'netbox_object_type', value: 'device')
+        host = Host::Managed.find(unmanaged_host.id)
+        host.stubs(:compute?).returns(true)
+
+        assert_not host.netbox_virtual_machine?
+      end
+
+      it 'can be set to virtual machine with the parameter netbox_object_type' do
+        FactoryBot.create(:host_parameter, host: unmanaged_host, name: 'netbox_object_type', value: 'virtual_machine')
+        host = Host::Managed.find(unmanaged_host.id)
+        host.stubs(:compute?).returns(false)
+
+        assert host.netbox_virtual_machine?
+      end
+    end
+
     describe '#netbox_custom_fields' do
       it { assert_equal({ 'owner_team' => 'ops' }, host.netbox_custom_fields) }
 

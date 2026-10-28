@@ -46,9 +46,10 @@ module ForemanNetbox
           virtual_machine.cluster = cluster.id if virtual_machine.cluster.id != cluster.id
         end
 
+        # not sent if Netbox calculates it from the virtual disks or the compute resource could not be read
         def assign_disk
           disk = netbox_params.dig(:virtual_machine, :disk)
-          virtual_machine.disk = disk if virtual_machine.disk != disk
+          virtual_machine.disk = disk if disk && virtual_machine.disk != disk
         end
 
         def assign_memory

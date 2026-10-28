@@ -37,11 +37,11 @@ After installation of the plugin you can find its settings under Administer/Sett
 | `netbox_disk_base_unit`        | Megabytes per gigabyte for VM disk sizes, should match `DISK_BASE_UNIT` of Netbox            |
 | `netbox_periodic_sync`         | Periodically synchronize hosts (disabled, hourly or daily), see below                        |
 
-Netbox 4.5 introduced v2 API tokens. Enter them in the form `nbt_<key>.<token>`, which is the value Netbox shows after creating the token (without the `Bearer` prefix). Legacy v1 tokens still work, but are deprecated by Netbox and will be removed in Netbox 5.0. The token needs permissions to view, add, change and delete devices, device roles, device types, manufacturers, sites, interfaces, MAC addresses, IP addresses, tenants, tags, virtual machines, clusters, cluster types and virtual machine interfaces.
+Netbox 4.5 introduced v2 API tokens. Enter them in the form `nbt_<key>.<token>`, which is the value Netbox shows after creating the token (without the `Bearer` prefix). Legacy v1 tokens still work, but are deprecated by Netbox and will be removed in Netbox 5.0. The token needs permissions to view, add, change and delete devices, device roles, device types, manufacturers, sites, interfaces, MAC addresses, IP addresses, tenants, tags, virtual machines, clusters, cluster types, virtual machine interfaces and virtual disks.
 
-Hosts without a compute resource are synchronized as devices, hosts on VMware, Libvirt and Proxmox compute resources as virtual machines. The Netbox cluster of a virtual machine is the vSphere cluster for VMware and the name of the compute resource for Libvirt and Proxmox. Hosts on other compute resources can not be synchronized, the reason is shown in the Netbox status of the host.
+Hosts without a compute resource are synchronized as devices, hosts on VMware, Libvirt and Proxmox compute resources as virtual machines (the Foreman parameter `netbox_object_type` overrides it, see below). The Netbox cluster of a virtual machine is the vSphere cluster for VMware and the name of the compute resource for Libvirt and Proxmox. Hosts on other compute resources can not be synchronized, the reason is shown in the Netbox status of the host.
 
-Netbox stores virtual machine disk sizes in megabytes. The plugin converts the disk size from Foreman (gigabytes) using the `netbox_disk_base_unit` setting, which defaults to 1000 like `DISK_BASE_UNIT` in Netbox. Set it to 1024 if your Netbox uses `DISK_BASE_UNIT = 1024`.
+The volumes of a virtual machine are synchronized as Netbox virtual disks, named like the volume in the compute resource (e.g. `Hard disk 1` for VMware, the volume file for Libvirt, `scsi0` for Proxmox). Netbox calculates the disk size of the virtual machine from them. Netbox stores disk sizes in megabytes, the plugin converts the size from Foreman (gigabytes) using the `netbox_disk_base_unit` setting, which defaults to 1000 like `DISK_BASE_UNIT` in Netbox. Set it to 1024 if your Netbox uses `DISK_BASE_UNIT = 1024`.
 
 The synchronization status of a host is shown in the Netbox card on the Details tab of the host details page (and in the Netbox tab of the legacy host page).
 
@@ -68,19 +68,20 @@ Managed hosts are synchronized with Netbox:
 
 The values sent to Netbox can be changed with Foreman parameters. Like all Foreman parameters they can be set globally, per organization, location, host group, operating system, domain, subnet or host, the most specific one wins. Parameter values can contain ERB (if the setting "Interpolate ERB in parameters" is enabled), e.g. `<%= @host.operatingsystem %>`.
 
-| Netbox field                    | Default                                                            | Foreman parameter     |
-| ------------------------------- | ------------------------------------------------------------------ | --------------------- |
-| Tenant                          | Owner of the host                                                  | `netbox_tenant`       |
-| Site (devices)                  | Location name, or the location parameter `netbox_site`             | `netbox_site`         |
-| Device role (devices)           | `SERVER`                                                           | `netbox_device_role`  |
-| Device type (devices)           | Fact `productname` or `dmi::product::name`                         | `netbox_device_type`  |
-| Manufacturer (devices)          | Fact `manufacturer` or `dmi::manufacturer`                         | `netbox_manufacturer` |
-| Cluster (virtual machines)      | vSphere cluster (VMware), compute resource name (Libvirt, Proxmox) | `netbox_cluster`      |
-| Cluster type (virtual machines) | Depends on the compute resource type                               | `netbox_cluster_type` |
-| Status                          | Not changed (Netbox default `active`)                              | `netbox_status`       |
-| Custom field `<name>`           | Not changed                                                        | `netbox_cf_<name>`    |
+| Netbox field                    | Default                                                            | Foreman parameter                                    |
+| ------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------- |
+| Device or virtual machine       | Virtual machine for hosts on a compute resource, otherwise device  | `netbox_object_type` (`device` or `virtual_machine`) |
+| Tenant                          | Owner of the host                                                  | `netbox_tenant`                                      |
+| Site (devices)                  | Location name, or the location parameter `netbox_site`             | `netbox_site`                                        |
+| Device role (devices)           | `SERVER`                                                           | `netbox_device_role`                                 |
+| Device type (devices)           | Fact `productname` or `dmi::product::name`                         | `netbox_device_type`                                 |
+| Manufacturer (devices)          | Fact `manufacturer` or `dmi::manufacturer`                         | `netbox_manufacturer`                                |
+| Cluster (virtual machines)      | vSphere cluster (VMware), compute resource name (Libvirt, Proxmox) | `netbox_cluster`                                     |
+| Cluster type (virtual machines) | Depends on the compute resource type                               | `netbox_cluster_type`                                |
+| Status                          | Not changed (Netbox default `active`)                              | `netbox_status`                                      |
+| Custom field `<name>`           | Not changed                                                        | `netbox_cf_<name>`                                   |
 
-Missing tenants, sites, device roles, device types, manufacturers, clusters and cluster types are created in Netbox. The status has to be a Netbox status value (e.g. `planned`, `staged`, `active`, `offline`), custom fields have to exist in Netbox.
+Missing tenants, sites, device roles, device types, manufacturers, clusters and cluster types are created in Netbox. If `netbox_object_type` of a synchronized host changes, the device or virtual machine of the last synchronization is deleted in Netbox. A virtual machine without compute resource needs `netbox_cluster` and `netbox_cluster_type`. The status has to be a Netbox status value (e.g. `planned`, `staged`, `active`, `offline`), custom fields have to exist in Netbox.
 
 If an IP address of a host already exists in Netbox without being assigned (e.g. reserved in Netbox), it is assigned to the interface of the host instead of creating a new one.
 

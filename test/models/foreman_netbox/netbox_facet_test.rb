@@ -131,7 +131,7 @@ module ForemanNetbox
         let(:cluster_name) { raw_data.dig(:cluster, :name) }
         let(:vcpus) { raw_data.dig(:virtual_machine, :vcpus) }
         let(:memory) { raw_data.dig(:virtual_machine, :memory) }
-        let(:disk) { raw_data.dig(:virtual_machine, :disk) }
+        let(:virtual_disks) { raw_data.dig(:virtual_disks, :results) }
         let(:host) do
           FactoryBot.build_stubbed(
             :host,
@@ -171,10 +171,9 @@ module ForemanNetbox
                 cluster: cluster_name,
                 cpus: vcpus,
                 memory_mb: memory,
-                volumes: [
-                  OpenStruct.new(size_gb: disk / 2000),
-                  OpenStruct.new(size_gb: disk / 2000),
-                ]
+                volumes: virtual_disks.map do |virtual_disk|
+                  OpenStruct.new(name: virtual_disk[:name], size_gb: virtual_disk[:size] / 1000)
+                end
               )
             )
             host.stubs(:compute_resource).returns(
@@ -241,8 +240,14 @@ module ForemanNetbox
           it { assert host.netbox_facet.netbox_will_change? }
         end
 
-        context 'when disk is changed' do
-          let(:disk) { raw_data.dig(:virtual_machine, :disk) * 2 }
+        context 'when a virtual disk is resized' do
+          let(:virtual_disks) { raw_data.dig(:virtual_disks, :results).map { |virtual_disk| virtual_disk.merge(size: virtual_disk[:size] * 2) } }
+
+          it { assert host.netbox_facet.netbox_will_change? }
+        end
+
+        context 'when a virtual disk is added' do
+          let(:virtual_disks) { raw_data.dig(:virtual_disks, :results) + [{ name: 'Hard disk 2', size: 10_000 }] }
 
           it { assert host.netbox_facet.netbox_will_change? }
         end

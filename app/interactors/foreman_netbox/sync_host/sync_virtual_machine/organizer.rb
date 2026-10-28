@@ -7,7 +7,7 @@ module ForemanNetbox
         include ::Interactor::Organizer
 
         around do |interactor|
-          interactor.call if context.host.compute?
+          interactor.call if context.host.netbox_virtual_machine?
         end
 
         after do
@@ -21,6 +21,7 @@ module ForemanNetbox
           SyncVirtualMachine::Find,
           SyncVirtualMachine::Create,
           SyncVirtualMachine::SyncInterfaces::Organizer,
+          SyncVirtualMachine::SyncVirtualDisks::Organizer,
           SyncVirtualMachine::Update,
           SyncVirtualMachine::SaveNetboxURL
       end

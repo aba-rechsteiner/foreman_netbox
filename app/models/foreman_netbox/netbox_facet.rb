@@ -6,7 +6,7 @@ module ForemanNetbox
 
     COMMON_PARAMS = %i[interfaces ip_addresses tenant].freeze
     DEVICE_PARAMS = %i[device device_role device_type manufacturer site].freeze
-    VIRTUAL_MACHINE_PARAMS = %i[virtual_machine cluster cluster_type].freeze
+    VIRTUAL_MACHINE_PARAMS = %i[virtual_machine virtual_disks cluster cluster_type].freeze
 
     validates :host, presence: true, allow_blank: false
     validates :url, uniqueness: true

@@ -46,7 +46,7 @@ class SyncRhelVirtualHostTest < ActiveSupport::TestCase
           cpus: 1,
           memory_mb: 1024,
           volumes: [
-            OpenStruct.new(size_gb: 120),
+            OpenStruct.new(name: 'Hard disk 1', size_gb: 120),
           ]
         )
       )
@@ -57,13 +57,18 @@ class SyncRhelVirtualHostTest < ActiveSupport::TestCase
   test 'sync virtual host' do
     ForemanNetbox::NetboxFacet.any_instance.expects(:update).twice.returns(true)
 
-    assert subject.success?
+    assert subject.success?, subject.error
+
+    # reloaded, as Netbox calculates the disk size from the virtual disks
+    virtual_machine = ForemanNetbox::Api.client.virtualization.virtual_machine(subject.virtual_machine.id)
+    virtual_disks = ForemanNetbox::Api.virtual_disks.filter(virtual_machine_id: virtual_machine.id)
+    assert_equal [['Hard disk 1', 120_000]], (virtual_disks.map { |virtual_disk| [virtual_disk.name, virtual_disk.size] })
 
     assert_equal host.name,                                        subject.virtual_machine.name
     assert_equal host.owner.netbox_tenant_name,                    subject.virtual_machine.tenant.name
     assert_equal host.compute_object.cpus.to_f,                    subject.virtual_machine.vcpus
     assert_equal host.compute_object.memory_mb,                    subject.virtual_machine.memory
-    assert_equal host.compute_object.volumes.first.size_gb * 1000, subject.virtual_machine.disk
+    assert_equal host.compute_object.volumes.first.size_gb * 1000, virtual_machine.disk
     assert_equal host.compute_object.cluster,                      subject.virtual_machine.cluster.name
     assert_equal 'VMware ESXi',                                    subject.cluster_type.name
 

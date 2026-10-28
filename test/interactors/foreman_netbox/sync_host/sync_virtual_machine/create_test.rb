@@ -50,7 +50,6 @@ class CreateVirtualMachineTest < ActiveSupport::TestCase
         body: {
           vcpus: netbox_virtual_machine_params[:vcpus],
           memory: netbox_virtual_machine_params[:memory],
-          disk: netbox_virtual_machine_params[:disk],
           name: netbox_virtual_machine_params[:name],
           cluster: cluster.id,
           tenant: tenant.id,

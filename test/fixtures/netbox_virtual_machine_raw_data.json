@@ -1,8 +1,8 @@
 {
   "tenant": {
-    "id": 2,
-    "url": "http://0.0.0.0:8000/api/tenancy/tenants/2/",
-    "display_url": "http://0.0.0.0:8000/tenancy/tenants/2/",
+    "id": 1,
+    "url": "http://0.0.0.0:8000/api/tenancy/tenants/1/",
+    "display_url": "http://0.0.0.0:8000/tenancy/tenants/1/",
     "display": "Owner",
     "name": "Owner",
     "slug": "owner",
@@ -22,15 +22,15 @@
       }
     ],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:39.590694Z",
-    "last_updated": "2026-10-28T07:28:39.590702Z",
+    "created": "2026-10-28T16:11:24.939911Z",
+    "last_updated": "2026-10-28T16:11:24.939923Z",
     "circuit_count": 0,
-    "device_count": 2,
+    "device_count": 1,
     "ipaddress_count": 0,
     "prefix_count": 0,
     "rack_count": 0,
     "site_count": 0,
-    "virtualmachine_count": 1,
+    "virtualmachine_count": 0,
     "vlan_count": 0,
     "vrf_count": 0,
     "cluster_count": 0
@@ -47,9 +47,9 @@
     "comments": "",
     "tags": [],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:39.637378Z",
-    "last_updated": "2026-10-28T07:28:39.637386Z",
-    "cluster_count": 1
+    "created": "2026-10-28T16:11:26.753020Z",
+    "last_updated": "2026-10-28T16:11:26.753035Z",
+    "cluster_count": 0
   },
   "cluster": {
     "id": 2,
@@ -89,13 +89,13 @@
       }
     ],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:39.693754Z",
-    "last_updated": "2026-10-28T07:28:39.693771Z",
+    "created": "2026-10-28T16:11:26.840039Z",
+    "last_updated": "2026-10-28T16:11:26.840055Z",
     "device_count": 0,
-    "virtualmachine_count": 1,
-    "allocated_vcpus": 1.0,
-    "allocated_memory": 1024,
-    "allocated_disk": 120000
+    "virtualmachine_count": 0,
+    "allocated_vcpus": null,
+    "allocated_memory": null,
+    "allocated_disk": null
   },
   "ip_addresses": {
     "count": 2,
@@ -103,9 +103,9 @@
     "previous": null,
     "results": [
       {
-        "id": 5,
-        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/5/",
-        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/5/",
+        "id": 4,
+        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/4/",
+        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/4/",
         "display": "10.0.0.9/24",
         "family": {
           "value": 4,
@@ -153,13 +153,13 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:29:18.884444Z",
-        "last_updated": "2026-10-28T07:29:18.884454Z"
+        "created": "2026-10-28T16:11:27.349517Z",
+        "last_updated": "2026-10-28T16:11:27.349534Z"
       },
       {
-        "id": 6,
-        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/6/",
-        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/6/",
+        "id": 5,
+        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/5/",
+        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/5/",
         "display": "1600:0:2d0:202::19/64",
         "family": {
           "value": 6,
@@ -207,8 +207,8 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:29:18.993448Z",
-        "last_updated": "2026-10-28T07:29:18.993461Z"
+        "created": "2026-10-28T16:11:27.472935Z",
+        "last_updated": "2026-10-28T16:11:27.472949Z"
       }
     ]
   },
@@ -236,16 +236,16 @@
         "mtu": null,
         "mac_address": "C3:CD:63:54:21:62",
         "primary_mac_address": {
-          "id": 7,
-          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/7/",
+          "id": 3,
+          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/3/",
           "display": "C3:CD:63:54:21:62",
           "mac_address": "C3:CD:63:54:21:62",
           "description": ""
         },
         "mac_addresses": [
           {
-            "id": 7,
-            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/7/",
+            "id": 3,
+            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/3/",
             "display": "C3:CD:63:54:21:62",
             "mac_address": "C3:CD:63:54:21:62",
             "description": ""
@@ -272,8 +272,8 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:28:39.853295Z",
-        "last_updated": "2026-10-28T07:28:39.871211Z",
+        "created": "2026-10-28T16:11:26.983669Z",
+        "last_updated": "2026-10-28T16:11:27.017869Z",
         "count_ipaddresses": 1,
         "count_fhrp_groups": 0
       },
@@ -296,16 +296,16 @@
         "mtu": null,
         "mac_address": "45:E9:6A:83:02:23",
         "primary_mac_address": {
-          "id": 14,
-          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/14/",
+          "id": 4,
+          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/4/",
           "display": "45:E9:6A:83:02:23",
           "mac_address": "45:E9:6A:83:02:23",
           "description": ""
         },
         "mac_addresses": [
           {
-            "id": 14,
-            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/14/",
+            "id": 4,
+            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/4/",
             "display": "45:E9:6A:83:02:23",
             "mac_address": "45:E9:6A:83:02:23",
             "description": ""
@@ -332,10 +332,48 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:28:39.932277Z",
-        "last_updated": "2026-10-28T07:30:27.373082Z",
+        "created": "2026-10-28T16:11:27.076101Z",
+        "last_updated": "2026-10-28T16:11:27.104458Z",
         "count_ipaddresses": 1,
         "count_fhrp_groups": 0
+      }
+    ]
+  },
+  "virtual_disks": {
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+      {
+        "id": 3,
+        "url": "http://0.0.0.0:8000/api/virtualization/virtual-disks/3/",
+        "display_url": "http://0.0.0.0:8000/virtualization/virtual-disks/3/",
+        "display": "Disk 1",
+        "virtual_machine": {
+          "id": 2,
+          "url": "http://0.0.0.0:8000/api/virtualization/virtual-machines/2/",
+          "display": "rhel_virtual_host.tier.example.com",
+          "name": "rhel_virtual_host.tier.example.com",
+          "description": ""
+        },
+        "name": "Disk 1",
+        "description": "",
+        "size": 120000,
+        "owner": null,
+        "tags": [
+          {
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/extras/tags/1/",
+            "display_url": "http://0.0.0.0:8000/extras/tags/1/",
+            "display": "foreman",
+            "name": "foreman",
+            "slug": "foreman",
+            "color": "9e9e9e"
+          }
+        ],
+        "custom_fields": {},
+        "created": "2026-10-28T16:11:27.624238Z",
+        "last_updated": "2026-10-28T16:11:27.624246Z"
       }
     ]
   },
@@ -366,8 +404,8 @@
     "device": null,
     "platform": null,
     "primary_ip": {
-      "id": 6,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/6/",
+      "id": 5,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/5/",
       "display": "1600:0:2d0:202::19/64",
       "family": {
         "value": 6,
@@ -380,8 +418,8 @@
       "description": ""
     },
     "primary_ip4": {
-      "id": 5,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/5/",
+      "id": 4,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/4/",
       "display": "10.0.0.9/24",
       "family": {
         "value": 4,
@@ -394,8 +432,8 @@
       "description": ""
     },
     "primary_ip6": {
-      "id": 6,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/6/",
+      "id": 5,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/5/",
       "display": "1600:0:2d0:202::19/64",
       "family": {
         "value": 6,
@@ -413,8 +451,8 @@
     "description": "",
     "serial": "",
     "tenant": {
-      "id": 2,
-      "url": "http://0.0.0.0:8000/api/tenancy/tenants/2/",
+      "id": 1,
+      "url": "http://0.0.0.0:8000/api/tenancy/tenants/1/",
       "display": "Owner",
       "name": "Owner",
       "slug": "owner",
@@ -436,10 +474,10 @@
     "local_context_data": null,
     "config_template": null,
     "custom_fields": {},
-    "created": "2026-10-28T07:28:39.794947Z",
-    "last_updated": "2026-10-28T07:29:19.216928Z",
+    "created": "2026-10-28T16:11:26.919581Z",
+    "last_updated": "2026-10-28T16:11:27.822491Z",
     "interface_count": 2,
-    "virtual_disk_count": 0,
+    "virtual_disk_count": 1,
     "config_context": {}
   }
 }

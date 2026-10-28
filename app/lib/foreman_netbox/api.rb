@@ -9,6 +9,11 @@ module ForemanNetbox
       end
     end
 
+    def self.virtual_disks
+      client
+      ForemanNetbox::VirtualDisks.new
+    end
+
     def self.netbox_api_url
       return Setting['netbox_api_url'] if URI.parse(Setting['netbox_api_url']).is_a?(URI::HTTP)
 

@@ -10,7 +10,8 @@ module ForemanNetbox
         context.raw_data = {}
       end
 
-      organize SyncHost::SyncVirtualMachine::Organizer,
+      organize SyncHost::DeleteReplacedObject,
+        SyncHost::SyncVirtualMachine::Organizer,
         SyncHost::SyncDevice::Organizer
 
       def call

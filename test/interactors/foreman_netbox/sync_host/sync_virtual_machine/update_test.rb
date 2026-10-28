@@ -174,7 +174,6 @@ class UpdateVirtualMachineTest < ActiveSupport::TestCase
         body: {
           name: host.name,
           cluster: cluster.id,
-          disk: host.compute_object.volumes.map(&:size_gb).reduce(&:+) * 1000,
           memory: host.compute_object.memory_mb,
           primary_ip4: primary_ip4.id,
           primary_ip6: primary_ip6.id,

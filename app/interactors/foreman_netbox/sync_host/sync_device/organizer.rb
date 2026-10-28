@@ -7,7 +7,7 @@ module ForemanNetbox
         include ::Interactor::Organizer
 
         around do |interactor|
-          interactor.call unless context.host.compute?
+          interactor.call unless context.host.netbox_virtual_machine?
         end
 
         after do

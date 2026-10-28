@@ -17,6 +17,11 @@ module ForemanNetbox
         optional(:custom_fields).filled(:hash)
       end
 
+      optional(:virtual_disks).array(:hash) do
+        required(:name).filled(:string)
+        required(:size).filled(:integer)
+      end
+
       required(:cluster).filled(:hash) do
         required(:name).filled(:string)
         optional(:tags).array(:string)

@@ -8,7 +8,7 @@ module ForemanNetbox
 
     def initialize(host)
       @host = host
-      @is_compute = host.compute?
+      @is_compute = host.netbox_virtual_machine?
       @data = host.netbox_facet.raw_data&.deep_symbolize_keys || {}
       @result = {}
     end
@@ -58,9 +58,19 @@ module ForemanNetbox
       return unless data.key?(:virtual_machine)
 
       virtual_machine = data.fetch(:virtual_machine, {})
-      result[:virtual_machine] = virtual_machine.slice(:name, :vcpus, :memory, :disk)
+      # with virtual disks, Netbox calculates the disk size of the virtual machine itself
+      attributes = data.key?(:virtual_disks) ? %i[name vcpus memory] : %i[name vcpus memory disk]
+      result[:virtual_machine] = virtual_machine.slice(*attributes)
                                                 .merge(mapped_status_and_custom_fields(virtual_machine))
                                                 .compact
+    end
+
+    def read_virtual_disks
+      return unless data.key?(:virtual_disks)
+
+      result[:virtual_disks] = data.fetch(:virtual_disks, {}).fetch(:results, []).map do |virtual_disk|
+        virtual_disk.slice(:name, :size)
+      end
     end
 
     def read_tenant

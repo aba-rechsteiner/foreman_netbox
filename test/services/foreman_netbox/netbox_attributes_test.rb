@@ -256,14 +256,19 @@ module ForemanNetbox
         }
       end
 
-      it { assert_equal expected, host.netbox_facet.netbox_params.fetch(:virtual_machine) }
+      let(:netbox_params) { host.netbox_facet.netbox_params }
+
+      it 'sends the virtual disks, Netbox calculates the disk of the virtual machine' do
+        assert_equal expected.except(:disk), netbox_params.fetch(:virtual_machine)
+        assert_equal [{ name: 'Disk 1', size: 10_000 }, { name: 'Disk 2', size: 10_000 }], netbox_params.fetch(:virtual_disks)
+      end
 
       context 'when the Netbox disk base unit is 1024' do
         setup do
           Setting[:netbox_disk_base_unit] = 1024
         end
 
-        it { assert_equal expected.merge(disk: 20_480), host.netbox_facet.netbox_params.fetch(:virtual_machine) }
+        it { assert_equal [10_240, 10_240], netbox_params.fetch(:virtual_disks).pluck(:size) }
       end
     end
 
@@ -358,6 +363,39 @@ module ForemanNetbox
           assert_equal({ name: 'Cluster Name' }, subject[:cluster])
           assert_equal({ name: 'KVM', slug: 'kvm' }, subject[:cluster_type])
           assert_equal({ vcpus: 2, memory: 2048, name: host.name, status: 'planned', custom_fields: custom_fields }, subject[:virtual_machine])
+        end
+      end
+    end
+
+    describe 'with the Foreman parameter netbox_object_type' do
+      subject { host.netbox_facet.netbox_params }
+
+      let(:host) do
+        FactoryBot.build_stubbed(:host, :managed, interfaces: [FactoryBot.build_stubbed(:nic_base, identifier: 'eth0')]).tap do |host|
+          host.stubs(:compute?).returns(compute)
+          host.stubs(:host_params).returns('netbox_object_type' => object_type)
+        end
+      end
+
+      context 'when a host on a compute resource is a device' do
+        let(:compute) { true }
+        let(:object_type) { 'device' }
+
+        it 'sends a device' do
+          assert subject.key?(:device)
+          assert_not subject.key?(:virtual_machine)
+          assert_equal({ value: 'virtual' }, subject[:interfaces].first[:type])
+        end
+      end
+
+      context 'when a host without compute resource is a virtual machine' do
+        let(:compute) { false }
+        let(:object_type) { 'virtual_machine' }
+
+        it 'sends a virtual machine' do
+          assert subject.key?(:virtual_machine)
+          assert_not subject.key?(:device)
+          assert_not subject[:interfaces].first.key?(:type)
         end
       end
     end

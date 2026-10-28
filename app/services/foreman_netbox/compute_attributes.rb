@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module ForemanNetbox
-  # Reads the virtual machine attributes for Netbox (vcpus, memory in MB, disk in MB and cluster)
+  # Reads the virtual machine attributes for Netbox (vcpus, memory in MB, disk in MB, virtual disks and cluster)
   # from the compute object of a host, every compute resource provider has its own representation of them.
   class ComputeAttributes
     BYTES_PER_MEGABYTE = 1024**2
@@ -27,8 +27,8 @@ module ForemanNetbox
                    else {}
                    end
 
-      # Netbox stores virtual machine disk sizes in megabytes
-      attributes[:disk] &&= attributes[:disk] * Setting[:netbox_disk_base_unit]
+      volumes = attributes.delete(:volumes)
+      attributes.merge!(disks(volumes)) if volumes
       attributes.compact
     rescue StandardError => e
       # a host must still be saveable if its compute object can not be read
@@ -41,11 +41,29 @@ module ForemanNetbox
 
     attr_reader :host
 
+    # Netbox stores disk sizes in megabytes, the names of virtual disks have to be unique per virtual machine
+    def disks(volumes)
+      base_unit = Setting[:netbox_disk_base_unit]
+      names = Hash.new(0)
+      virtual_disks = volumes.each_with_index.map do |volume, index|
+        name = volume[:name].presence || "Disk #{index + 1}"
+        names[name] += 1
+        name = "#{name} (#{names[name]})" if names[name] > 1
+
+        { name: name, size: volume[:size_gb].to_i * base_unit }
+      end
+
+      {
+        disk: (virtual_disks.sum { |virtual_disk| virtual_disk[:size] } if virtual_disks.any?),
+        virtual_disks: virtual_disks,
+      }
+    end
+
     def vmware(server)
       {
         vcpus: server.cpus,
         memory: server.memory_mb,
-        disk: server.volumes&.map(&:size_gb)&.reduce(:+),
+        volumes: server.volumes&.map { |volume| { name: volume.name, size_gb: volume.size_gb } },
         cluster: server.cluster,
       }
     end
@@ -55,7 +73,7 @@ module ForemanNetbox
       {
         vcpus: server.cpus,
         memory: server.memory_size && (server.memory_size / 1024),
-        disk: server.volumes&.map { |volume| volume.capacity.to_i }&.reduce(:+),
+        volumes: server.volumes&.map { |volume| { name: volume.name, size_gb: volume.capacity.to_i } },
         cluster: host.compute_resource.name,
       }
     end
@@ -65,7 +83,7 @@ module ForemanNetbox
       {
         vcpus: server.cpus,
         memory: server.maxmem && (server.maxmem.to_i / BYTES_PER_MEGABYTE),
-        disk: server.volumes&.select(&:hard_disk?)&.map { |disk| proxmox_disk_size_gb(disk.size) }&.reduce(:+),
+        volumes: server.volumes&.select(&:hard_disk?)&.map { |disk| { name: disk.id, size_gb: proxmox_disk_size_gb(disk.size) } },
         cluster: host.compute_resource.name,
       }
     end

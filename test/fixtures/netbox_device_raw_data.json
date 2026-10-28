@@ -1,8 +1,8 @@
 {
   "tenant": {
-    "id": 2,
-    "url": "http://0.0.0.0:8000/api/tenancy/tenants/2/",
-    "display_url": "http://0.0.0.0:8000/tenancy/tenants/2/",
+    "id": 1,
+    "url": "http://0.0.0.0:8000/api/tenancy/tenants/1/",
+    "display_url": "http://0.0.0.0:8000/tenancy/tenants/1/",
     "display": "Owner",
     "name": "Owner",
     "slug": "owner",
@@ -22,23 +22,23 @@
       }
     ],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:39.590694Z",
-    "last_updated": "2026-10-28T07:28:39.590702Z",
+    "created": "2026-10-28T16:11:24.939911Z",
+    "last_updated": "2026-10-28T16:11:24.939923Z",
     "circuit_count": 0,
-    "device_count": 2,
+    "device_count": 0,
     "ipaddress_count": 0,
     "prefix_count": 0,
     "rack_count": 0,
     "site_count": 0,
-    "virtualmachine_count": 1,
+    "virtualmachine_count": 0,
     "vlan_count": 0,
     "vrf_count": 0,
     "cluster_count": 0
   },
   "site": {
-    "id": 2,
-    "url": "http://0.0.0.0:8000/api/dcim/sites/2/",
-    "display_url": "http://0.0.0.0:8000/dcim/sites/2/",
+    "id": 1,
+    "url": "http://0.0.0.0:8000/api/dcim/sites/1/",
+    "display_url": "http://0.0.0.0:8000/dcim/sites/1/",
     "display": "Location",
     "name": "Location",
     "slug": "location",
@@ -71,19 +71,19 @@
       }
     ],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:38.442636Z",
-    "last_updated": "2026-10-28T07:28:38.442647Z",
+    "created": "2026-10-28T16:11:25.013254Z",
+    "last_updated": "2026-10-28T16:11:25.013262Z",
     "circuit_count": 0,
-    "device_count": 2,
+    "device_count": 0,
     "prefix_count": 0,
     "rack_count": 0,
     "virtualmachine_count": 0,
     "vlan_count": 0
   },
   "device_role": {
-    "id": 2,
-    "url": "http://0.0.0.0:8000/api/dcim/device-roles/2/",
-    "display_url": "http://0.0.0.0:8000/dcim/device-roles/2/",
+    "id": 1,
+    "url": "http://0.0.0.0:8000/api/dcim/device-roles/1/",
+    "display_url": "http://0.0.0.0:8000/dcim/device-roles/1/",
     "display": "SERVER",
     "name": "SERVER",
     "slug": "server",
@@ -94,18 +94,18 @@
     "description": "",
     "tags": [],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:38.553495Z",
-    "last_updated": "2026-10-28T07:28:38.553507Z",
-    "device_count": 2,
+    "created": "2026-10-28T16:11:25.086651Z",
+    "last_updated": "2026-10-28T16:11:25.086659Z",
+    "device_count": 0,
     "virtualmachine_count": 0,
     "owner": null,
     "comments": "",
     "_depth": 0
   },
   "manufacturer": {
-    "id": 2,
-    "url": "http://0.0.0.0:8000/api/dcim/manufacturers/2/",
-    "display_url": "http://0.0.0.0:8000/dcim/manufacturers/2/",
+    "id": 1,
+    "url": "http://0.0.0.0:8000/api/dcim/manufacturers/1/",
+    "display_url": "http://0.0.0.0:8000/dcim/manufacturers/1/",
     "display": "HP",
     "name": "HP",
     "slug": "hp",
@@ -114,21 +114,21 @@
     "comments": "",
     "tags": [],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:38.630445Z",
-    "last_updated": "2026-10-28T07:28:38.630462Z",
-    "devicetype_count": 1,
+    "created": "2026-10-28T16:11:25.241681Z",
+    "last_updated": "2026-10-28T16:11:25.241701Z",
+    "devicetype_count": 0,
     "moduletype_count": 0,
     "inventoryitem_count": 0,
     "platform_count": 0
   },
   "device_type": {
-    "id": 2,
-    "url": "http://0.0.0.0:8000/api/dcim/device-types/2/",
-    "display_url": "http://0.0.0.0:8000/dcim/device-types/2/",
+    "id": 1,
+    "url": "http://0.0.0.0:8000/api/dcim/device-types/1/",
+    "display_url": "http://0.0.0.0:8000/dcim/device-types/1/",
     "display": "ProLiant DL380 Gen9",
     "manufacturer": {
-      "id": 2,
-      "url": "http://0.0.0.0:8000/api/dcim/manufacturers/2/",
+      "id": 1,
+      "url": "http://0.0.0.0:8000/api/dcim/manufacturers/1/",
       "display": "HP",
       "name": "HP",
       "slug": "hp",
@@ -164,9 +164,9 @@
       }
     ],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:38.701354Z",
-    "last_updated": "2026-10-28T07:28:38.701366Z",
-    "device_count": 1,
+    "created": "2026-10-28T16:11:25.348771Z",
+    "last_updated": "2026-10-28T16:11:25.348779Z",
+    "device_count": 0,
     "console_port_template_count": 0,
     "console_server_port_template_count": 0,
     "power_port_template_count": 0,
@@ -186,9 +186,9 @@
     "previous": null,
     "results": [
       {
-        "id": 7,
-        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/7/",
-        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/7/",
+        "id": 2,
+        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/2/",
+        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/2/",
         "display": "10.0.0.8/24",
         "family": {
           "value": 4,
@@ -203,14 +203,14 @@
         },
         "role": null,
         "assigned_object_type": "dcim.interface",
-        "assigned_object_id": 2,
+        "assigned_object_id": 1,
         "assigned_object": {
-          "id": 2,
-          "url": "http://0.0.0.0:8000/api/dcim/interfaces/2/",
+          "id": 1,
+          "url": "http://0.0.0.0:8000/api/dcim/interfaces/1/",
           "display": "eth0",
           "device": {
-            "id": 2,
-            "url": "http://0.0.0.0:8000/api/dcim/devices/2/",
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/dcim/devices/1/",
             "display": "rhel_physical_host.tier.example.com",
             "name": "rhel_physical_host.tier.example.com",
             "description": ""
@@ -238,13 +238,13 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:29:19.968945Z",
-        "last_updated": "2026-10-28T07:29:19.968956Z"
+        "created": "2026-10-28T16:11:26.261866Z",
+        "last_updated": "2026-10-28T16:11:26.261882Z"
       },
       {
-        "id": 9,
-        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/9/",
-        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/9/",
+        "id": 3,
+        "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/3/",
+        "display_url": "http://0.0.0.0:8000/ipam/ip-addresses/3/",
         "display": "1600:0:2d0:202::18/64",
         "family": {
           "value": 6,
@@ -259,14 +259,14 @@
         },
         "role": null,
         "assigned_object_type": "dcim.interface",
-        "assigned_object_id": 6,
+        "assigned_object_id": 2,
         "assigned_object": {
-          "id": 6,
-          "url": "http://0.0.0.0:8000/api/dcim/interfaces/6/",
+          "id": 2,
+          "url": "http://0.0.0.0:8000/api/dcim/interfaces/2/",
           "display": "eth1",
           "device": {
-            "id": 2,
-            "url": "http://0.0.0.0:8000/api/dcim/devices/2/",
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/dcim/devices/1/",
             "display": "rhel_physical_host.tier.example.com",
             "name": "rhel_physical_host.tier.example.com",
             "description": ""
@@ -294,8 +294,8 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:30:26.305053Z",
-        "last_updated": "2026-10-28T07:30:26.305062Z"
+        "created": "2026-10-28T16:11:26.378463Z",
+        "last_updated": "2026-10-28T16:11:26.378471Z"
       }
     ]
   },
@@ -305,13 +305,13 @@
     "previous": null,
     "results": [
       {
-        "id": 2,
-        "url": "http://0.0.0.0:8000/api/dcim/interfaces/2/",
-        "display_url": "http://0.0.0.0:8000/dcim/interfaces/2/",
+        "id": 1,
+        "url": "http://0.0.0.0:8000/api/dcim/interfaces/1/",
+        "display_url": "http://0.0.0.0:8000/dcim/interfaces/1/",
         "display": "eth0",
         "device": {
-          "id": 2,
-          "url": "http://0.0.0.0:8000/api/dcim/devices/2/",
+          "id": 1,
+          "url": "http://0.0.0.0:8000/api/dcim/devices/1/",
           "display": "rhel_physical_host.tier.example.com",
           "name": "rhel_physical_host.tier.example.com",
           "description": ""
@@ -334,16 +334,16 @@
         "mtu": null,
         "mac_address": "C3:CD:63:54:21:61",
         "primary_mac_address": {
-          "id": 13,
-          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/13/",
+          "id": 1,
+          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/1/",
           "display": "C3:CD:63:54:21:61",
           "mac_address": "C3:CD:63:54:21:61",
           "description": ""
         },
         "mac_addresses": [
           {
-            "id": 13,
-            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/13/",
+            "id": 1,
+            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/1/",
             "display": "C3:CD:63:54:21:61",
             "mac_address": "C3:CD:63:54:21:61",
             "description": ""
@@ -391,20 +391,20 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:28:38.983308Z",
-        "last_updated": "2026-10-28T07:30:26.508558Z",
+        "created": "2026-10-28T16:11:25.730497Z",
+        "last_updated": "2026-10-28T16:11:25.769589Z",
         "count_ipaddresses": 1,
         "count_fhrp_groups": 0,
         "_occupied": false
       },
       {
-        "id": 6,
-        "url": "http://0.0.0.0:8000/api/dcim/interfaces/6/",
-        "display_url": "http://0.0.0.0:8000/dcim/interfaces/6/",
+        "id": 2,
+        "url": "http://0.0.0.0:8000/api/dcim/interfaces/2/",
+        "display_url": "http://0.0.0.0:8000/dcim/interfaces/2/",
         "display": "eth1",
         "device": {
-          "id": 2,
-          "url": "http://0.0.0.0:8000/api/dcim/devices/2/",
+          "id": 1,
+          "url": "http://0.0.0.0:8000/api/dcim/devices/1/",
           "display": "rhel_physical_host.tier.example.com",
           "name": "rhel_physical_host.tier.example.com",
           "description": ""
@@ -427,16 +427,16 @@
         "mtu": null,
         "mac_address": "45:E9:6A:83:02:22",
         "primary_mac_address": {
-          "id": 12,
-          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/12/",
+          "id": 2,
+          "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/2/",
           "display": "45:E9:6A:83:02:22",
           "mac_address": "45:E9:6A:83:02:22",
           "description": ""
         },
         "mac_addresses": [
           {
-            "id": 12,
-            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/12/",
+            "id": 2,
+            "url": "http://0.0.0.0:8000/api/dcim/mac-addresses/2/",
             "display": "45:E9:6A:83:02:22",
             "mac_address": "45:E9:6A:83:02:22",
             "description": ""
@@ -484,8 +484,8 @@
           }
         ],
         "custom_fields": {},
-        "created": "2026-10-28T07:30:25.995885Z",
-        "last_updated": "2026-10-28T07:30:26.017690Z",
+        "created": "2026-10-28T16:11:25.894950Z",
+        "last_updated": "2026-10-28T16:11:25.952989Z",
         "count_ipaddresses": 1,
         "count_fhrp_groups": 0,
         "_occupied": false
@@ -493,18 +493,18 @@
     ]
   },
   "device": {
-    "id": 2,
-    "url": "http://0.0.0.0:8000/api/dcim/devices/2/",
-    "display_url": "http://0.0.0.0:8000/dcim/devices/2/",
+    "id": 1,
+    "url": "http://0.0.0.0:8000/api/dcim/devices/1/",
+    "display_url": "http://0.0.0.0:8000/dcim/devices/1/",
     "display": "rhel_physical_host.tier.example.com",
     "name": "rhel_physical_host.tier.example.com",
     "device_type": {
-      "id": 2,
-      "url": "http://0.0.0.0:8000/api/dcim/device-types/2/",
+      "id": 1,
+      "url": "http://0.0.0.0:8000/api/dcim/device-types/1/",
       "display": "ProLiant DL380 Gen9",
       "manufacturer": {
-        "id": 2,
-        "url": "http://0.0.0.0:8000/api/dcim/manufacturers/2/",
+        "id": 1,
+        "url": "http://0.0.0.0:8000/api/dcim/manufacturers/1/",
         "display": "HP",
         "name": "HP",
         "slug": "hp",
@@ -516,8 +516,8 @@
       "device_count": 1
     },
     "role": {
-      "id": 2,
-      "url": "http://0.0.0.0:8000/api/dcim/device-roles/2/",
+      "id": 1,
+      "url": "http://0.0.0.0:8000/api/dcim/device-roles/1/",
       "display": "SERVER",
       "name": "SERVER",
       "slug": "server",
@@ -527,8 +527,8 @@
       "_depth": 0
     },
     "tenant": {
-      "id": 2,
-      "url": "http://0.0.0.0:8000/api/tenancy/tenants/2/",
+      "id": 1,
+      "url": "http://0.0.0.0:8000/api/tenancy/tenants/1/",
       "display": "Owner",
       "name": "Owner",
       "slug": "owner",
@@ -538,8 +538,8 @@
     "serial": "ABCDEFGHI123",
     "asset_tag": null,
     "site": {
-      "id": 2,
-      "url": "http://0.0.0.0:8000/api/dcim/sites/2/",
+      "id": 1,
+      "url": "http://0.0.0.0:8000/api/dcim/sites/1/",
       "display": "Location",
       "name": "Location",
       "slug": "location",
@@ -559,8 +559,8 @@
     "airflow": null,
     "cooling_method": null,
     "primary_ip": {
-      "id": 9,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/9/",
+      "id": 3,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/3/",
       "display": "1600:0:2d0:202::18/64",
       "family": {
         "value": 6,
@@ -573,8 +573,8 @@
       "description": ""
     },
     "primary_ip4": {
-      "id": 7,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/7/",
+      "id": 2,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/2/",
       "display": "10.0.0.8/24",
       "family": {
         "value": 4,
@@ -587,8 +587,8 @@
       "description": ""
     },
     "primary_ip6": {
-      "id": 9,
-      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/9/",
+      "id": 3,
+      "url": "http://0.0.0.0:8000/api/ipam/ip-addresses/3/",
       "display": "1600:0:2d0:202::18/64",
       "family": {
         "value": 6,
@@ -623,8 +623,8 @@
       }
     ],
     "custom_fields": {},
-    "created": "2026-10-28T07:28:38.828813Z",
-    "last_updated": "2026-10-28T07:30:26.794090Z",
+    "created": "2026-10-28T16:11:25.516812Z",
+    "last_updated": "2026-10-28T16:11:26.624090Z",
     "console_port_count": 0,
     "console_server_port_count": 0,
     "power_port_count": 0,

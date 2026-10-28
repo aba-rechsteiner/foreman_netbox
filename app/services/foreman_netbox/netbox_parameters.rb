@@ -33,7 +33,7 @@ module ForemanNetbox
     end
 
     def call
-      additional_params = host.compute? ? ForemanNetbox::NetboxFacet::VIRTUAL_MACHINE_PARAMS : ForemanNetbox::NetboxFacet::DEVICE_PARAMS
+      additional_params = host.netbox_virtual_machine? ? ForemanNetbox::NetboxFacet::VIRTUAL_MACHINE_PARAMS : ForemanNetbox::NetboxFacet::DEVICE_PARAMS
 
       (ForemanNetbox::NetboxFacet::COMMON_PARAMS + additional_params).map do |param|
         send(param)
@@ -134,7 +134,7 @@ module ForemanNetbox
             name: identifier || (mac_address && "Interface #{mac_address}"),
             mac_address: mac_address,
             # Netbox virtual machine interfaces do not have a type
-            type: ({ value: DEFAULT_INTERFACE_TYPE } unless host.compute?),
+            type: ({ value: DEFAULT_INTERFACE_TYPE } unless host.netbox_virtual_machine?),
           }.compact
         end,
       }
@@ -164,13 +164,19 @@ module ForemanNetbox
     # rubocop:enable Metrics/CyclomaticComplexity
 
     def virtual_machine
+      attributes = netbox_compute_attributes.slice(:vcpus, :memory)
+      # with virtual disks, Netbox calculates the disk size of the virtual machine itself
+      attributes[:disk] = netbox_compute_attributes[:disk] unless netbox_compute_attributes.key?(:virtual_disks)
+
       {
-        virtual_machine: netbox_compute_attributes.slice(
-          :vcpus, :memory, :disk
-        ).merge(
-          name: host.name
-        ).merge(status_and_custom_fields).compact,
+        virtual_machine: attributes.merge(name: host.name).merge(status_and_custom_fields).compact,
       }
+    end
+
+    def virtual_disks
+      {
+        virtual_disks: netbox_compute_attributes[:virtual_disks],
+      }.compact
     end
 
     def cluster

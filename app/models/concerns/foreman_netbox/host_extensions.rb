@@ -30,6 +30,16 @@ module ForemanNetbox
       netbox_host_params["netbox_#{name}"].presence
     end
 
+    # Hosts on compute resources are virtual machines in Netbox, all others devices.
+    # The Foreman parameter netbox_object_type (device or virtual_machine) overrides it.
+    def netbox_virtual_machine?
+      case netbox_host_param(:object_type)
+      when 'device' then false
+      when 'virtual_machine' then true
+      else compute?
+      end
+    end
+
     # Netbox custom fields from the Foreman parameters "netbox_cf_<custom field name>"
     def netbox_custom_fields
       netbox_host_params.each_with_object({}) do |(name, value), custom_fields|
