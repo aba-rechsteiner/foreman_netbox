@@ -12,6 +12,8 @@ module ForemanNetbox
         required(:name).filled(:string)
         optional(:serial).maybe(:string)
         optional(:tags).array(:string)
+        optional(:status).filled(:string)
+        optional(:custom_fields).filled(:hash)
       end
 
       required(:device_type).filled(:hash) do

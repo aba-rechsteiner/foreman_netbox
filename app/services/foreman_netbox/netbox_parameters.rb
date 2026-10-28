@@ -21,7 +21,6 @@ module ForemanNetbox
     }.freeze
     DEVICE_ROLE = {
       name: 'SERVER',
-      color: '9e9e9e',
       slug: 'server',
     }.freeze
 
@@ -52,11 +51,21 @@ module ForemanNetbox
       @netbox_compute_attributes ||= ForemanNetbox::ComputeAttributes.call(host)
     end
 
+    # status and custom fields are only sent to Netbox if they are set by Foreman parameters
+    def status_and_custom_fields
+      {
+        status: host.netbox_host_param(:status),
+        custom_fields: host.netbox_custom_fields.symbolize_keys.presence,
+      }
+    end
+
     def tenant
+      name = host.netbox_host_param(:tenant)
+
       {
         tenant: {
-          name: host.owner&.netbox_tenant_name,
-          slug: host.owner&.netbox_tenant_slug,
+          name: name || host.owner&.netbox_tenant_name,
+          slug: name&.parameterize || host.owner&.netbox_tenant_slug,
         },
       }
     end
@@ -65,19 +74,22 @@ module ForemanNetbox
       {
         device: {
           name: host.name,
-          serial: host.facts.deep_symbolize_keys[:serialnumber],
-        },
+          serial: host.facts.deep_symbolize_keys[:serialnumber].presence,
+        }.merge(status_and_custom_fields).compact,
       }
     end
 
     def device_role
+      name = host.netbox_host_param(:device_role)
+
       {
-        device_role: DEVICE_ROLE,
+        device_role: name ? { name: name, slug: name.parameterize } : DEVICE_ROLE,
       }
     end
 
     def device_type
-      model = host.facts.deep_symbolize_keys[:productname] || host.facts.deep_symbolize_keys[:'dmi::product::name'] || UNKNOWN
+      model = host.netbox_host_param(:device_type) ||
+              host.facts.deep_symbolize_keys[:productname] || host.facts.deep_symbolize_keys[:'dmi::product::name'] || UNKNOWN
 
       {
         device_type: {
@@ -88,21 +100,26 @@ module ForemanNetbox
     end
 
     def manufacturer
-      name = host.facts.deep_symbolize_keys[:manufacturer] || host.facts.deep_symbolize_keys[:'dmi::manufacturer'] || UNKNOWN
+      name = host.netbox_host_param(:manufacturer) ||
+             host.facts.deep_symbolize_keys[:manufacturer] || host.facts.deep_symbolize_keys[:'dmi::manufacturer'] || UNKNOWN
+      # keep the slug of an existing manufacturer, which might have been found by its name
+      cached_manufacturer = cached_netbox_params.fetch(:manufacturer, {})
 
       {
         manufacturer: {
           name: name,
-          slug: cached_netbox_params.dig(:manufacturer, :slug) || name.parameterize,
+          slug: (cached_manufacturer[:slug] if cached_manufacturer[:name] == name) || name.parameterize,
         },
       }
     end
 
     def site
+      name = host.netbox_host_param(:site) || host.location&.netbox_site_name
+
       {
         site: {
-          name: host.location&.netbox_site_name,
-          slug: host.location&.netbox_site_slug,
+          name: name,
+          slug: name&.parameterize,
         },
       }
     end
@@ -152,23 +169,24 @@ module ForemanNetbox
           :vcpus, :memory, :disk
         ).merge(
           name: host.name
-        ),
+        ).merge(status_and_custom_fields).compact,
       }
     end
 
     def cluster
       {
         cluster: {
-          name: netbox_compute_attributes[:cluster],
+          name: host.netbox_host_param(:cluster) || netbox_compute_attributes[:cluster],
         }.compact,
       }
     end
 
     def cluster_type
+      name = host.netbox_host_param(:cluster_type)
       type = host.compute_resource&.type&.to_sym
 
       {
-        cluster_type: CLUSTER_TYPES.fetch(type, nil),
+        cluster_type: name ? { name: name, slug: name.parameterize } : CLUSTER_TYPES.fetch(type, nil),
       }
     end
   end

@@ -6,6 +6,7 @@ module ForemanNetbox
   class NetboxFacetTest < ActiveSupport::TestCase
     describe '#netbox_will_change?' do
       let(:tenant_name) { raw_data.dig(:tenant, :name) }
+      let(:host_params) { {} }
       let(:interfaces) { raw_data.dig(:interfaces, :results) }
       let(:ip_addresses) { raw_data.dig(:ip_addresses, :results) }
 
@@ -50,6 +51,7 @@ module ForemanNetbox
             end
           ).tap do |host|
             host.stubs(:compute?).returns(false)
+            host.stubs(:host_params).returns(host_params)
             host.stubs(:facts).returns(
               serialnumber: device_serial,
               manufacturer: manufacturer_name,
@@ -60,6 +62,24 @@ module ForemanNetbox
 
         context 'when no changes detected' do
           it { assert_not host.netbox_facet.netbox_will_change? }
+        end
+
+        context 'when the mapped status is unchanged' do
+          let(:host_params) { { 'netbox_status' => raw_data.dig(:device, :status, :value) } }
+
+          it { assert_not host.netbox_facet.netbox_will_change? }
+        end
+
+        context 'when the mapped status is changed' do
+          let(:host_params) { { 'netbox_status' => 'planned' } }
+
+          it { assert host.netbox_facet.netbox_will_change? }
+        end
+
+        context 'when a custom field is mapped' do
+          let(:host_params) { { 'netbox_cf_owner_team' => 'ops' } }
+
+          it { assert host.netbox_facet.netbox_will_change? }
         end
 
         context 'when interfaces are changed' do
@@ -145,6 +165,7 @@ module ForemanNetbox
             end
           ).tap do |host|
             host.stubs(:compute?).returns(true)
+            host.stubs(:host_params).returns(host_params)
             host.stubs(:compute_object).returns(
               OpenStruct.new(
                 cluster: cluster_name,
@@ -164,6 +185,24 @@ module ForemanNetbox
 
         context 'when no changes detected' do
           it { assert_not host.netbox_facet.netbox_will_change? }
+        end
+
+        context 'when the mapped status is unchanged' do
+          let(:host_params) { { 'netbox_status' => raw_data.dig(:virtual_machine, :status, :value) } }
+
+          it { assert_not host.netbox_facet.netbox_will_change? }
+        end
+
+        context 'when the mapped status is changed' do
+          let(:host_params) { { 'netbox_status' => 'planned' } }
+
+          it { assert host.netbox_facet.netbox_will_change? }
+        end
+
+        context 'when a custom field is mapped' do
+          let(:host_params) { { 'netbox_cf_owner_team' => 'ops' } }
+
+          it { assert host.netbox_facet.netbox_will_change? }
         end
 
         context 'when interfaces are changed' do

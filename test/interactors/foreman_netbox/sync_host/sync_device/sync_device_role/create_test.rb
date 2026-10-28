@@ -22,7 +22,6 @@ class CreateDeviceRoleTest < ActiveSupport::TestCase
       stub_post = stub_request(:post, "#{Setting[:netbox_url]}/api/dcim/device-roles/").with(
         body: {
           name: device_role_params[:name],
-          color: device_role_params[:color],
           slug: device_role_params[:slug],
         }.to_json
       ).to_return(

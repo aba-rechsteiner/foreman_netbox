@@ -13,6 +13,8 @@ module ForemanNetbox
         optional(:memory).maybe(:integer)
         optional(:disk).maybe(:integer)
         optional(:tags).array(:string)
+        optional(:status).filled(:string)
+        optional(:custom_fields).filled(:hash)
       end
 
       required(:cluster).filled(:hash) do

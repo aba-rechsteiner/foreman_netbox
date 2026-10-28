@@ -110,6 +110,24 @@ class UpdateVirtualMachineTest < ActiveSupport::TestCase
     it 'does not update virtual_machine' do
       assert_equal virtual_machine, subject.virtual_machine
     end
+
+    context 'when status and custom fields are mapped by Foreman parameters' do
+      setup do
+        host.stubs(:host_params).returns('netbox_status' => 'planned', 'netbox_cf_owner_team' => 'ops')
+      end
+
+      it 'updates status and custom fields of the virtual machine' do
+        stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/virtualization/virtual-machines/#{virtual_machine.id}/").with(
+          body: { status: 'planned', custom_fields: { owner_team: 'ops' } }.to_json
+        ).to_return(
+          status: 200, headers: { 'Content-Type': 'application/json' },
+          body: { id: 1 }.to_json
+        )
+
+        subject
+        assert_requested(stub_patch)
+      end
+    end
   end
 
   context 'if the host has been updated since the last synchronization' do

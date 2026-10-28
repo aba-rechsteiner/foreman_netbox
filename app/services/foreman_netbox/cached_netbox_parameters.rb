@@ -7,6 +7,7 @@ module ForemanNetbox
     end
 
     def initialize(host)
+      @host = host
       @is_compute = host.compute?
       @data = host.netbox_facet.raw_data&.deep_symbolize_keys || {}
       @result = {}
@@ -21,8 +22,18 @@ module ForemanNetbox
 
     private
 
-    attr_reader :data, :is_compute
+    attr_reader :host, :data, :is_compute
     attr_accessor :result
+
+    # status and custom fields are only compared if they are mapped by Foreman parameters
+    def mapped_status_and_custom_fields(object_data)
+      custom_field_names = host.netbox_custom_fields.keys.map(&:to_sym)
+
+      {
+        status: (object_data.dig(:status, :value) if host.netbox_host_param(:status)),
+        custom_fields: (object_data.fetch(:custom_fields, {}).slice(*custom_field_names) if custom_field_names.any?),
+      }
+    end
 
     def read_interfaces
       return unless data.key?(:interfaces)
@@ -46,7 +57,10 @@ module ForemanNetbox
     def read_virtual_machine
       return unless data.key?(:virtual_machine)
 
-      result[:virtual_machine] = data.fetch(:virtual_machine, {}).slice(:name, :vcpus, :memory, :disk)
+      virtual_machine = data.fetch(:virtual_machine, {})
+      result[:virtual_machine] = virtual_machine.slice(:name, :vcpus, :memory, :disk)
+                                                .merge(mapped_status_and_custom_fields(virtual_machine))
+                                                .compact
     end
 
     def read_tenant
@@ -70,16 +84,17 @@ module ForemanNetbox
     def read_device
       return unless data.key?(:device)
 
-      result[:device] = data.fetch(:device, {})
-                            .slice(:name, :serial)
-                            .compact
-                            .reject { |k, v| k == :serial && v.blank? }
+      device = data.fetch(:device, {})
+      result[:device] = device.slice(:name, :serial)
+                              .merge(mapped_status_and_custom_fields(device))
+                              .compact
+                              .reject { |k, v| k == :serial && v.blank? }
     end
 
     def read_device_role
       return unless data.key?(:device_role)
 
-      result[:device_role] = data.fetch(:device_role, {}).slice(:name, :color, :slug)
+      result[:device_role] = data.fetch(:device_role, {}).slice(:name, :slug)
     end
 
     def read_device_type

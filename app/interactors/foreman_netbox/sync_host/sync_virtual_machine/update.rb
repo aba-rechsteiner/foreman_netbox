@@ -8,7 +8,7 @@ module ForemanNetbox
         include ForemanNetbox::Concerns::PrimaryIps
         include ForemanNetbox::Concerns::AssignTags
 
-        ATTRIBUTES = %i[name cluster disk memory primary_ip4 primary_ip6 tenant vcpus].freeze
+        ATTRIBUTES = %i[name cluster disk memory primary_ip4 primary_ip6 tenant vcpus status custom_fields].freeze
 
         around do |interactor|
           interactor.call if context.virtual_machine
@@ -71,6 +71,23 @@ module ForemanNetbox
         def assign_vcpus
           vcpus = netbox_params.dig(:virtual_machine, :vcpus)
           virtual_machine.vcpus = vcpus if virtual_machine.vcpus != vcpus
+        end
+
+        def assign_status
+          status = netbox_params.dig(:virtual_machine, :status)
+          return if !status || virtual_machine['status']&.dig('value') == status
+
+          virtual_machine.status = status
+        end
+
+        def assign_custom_fields
+          new_custom_fields = netbox_params.dig(:virtual_machine, :custom_fields)
+          return if new_custom_fields.blank?
+
+          custom_fields = virtual_machine['custom_fields'] || {}
+          return if new_custom_fields.all? { |name, value| custom_fields[name.to_s] == value }
+
+          virtual_machine.custom_fields = new_custom_fields
         end
       end
     end

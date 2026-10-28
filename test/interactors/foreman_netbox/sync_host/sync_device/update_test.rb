@@ -118,6 +118,31 @@ class UpdateDeviceTest < ActiveSupport::TestCase
       assert_equal device, subject.device
       assert_not_requested(stub_patch)
     end
+
+    context 'when status and custom fields are mapped by Foreman parameters' do
+      setup do
+        host.stubs(:host_params).returns('netbox_status' => 'planned', 'netbox_cf_owner_team' => 'ops')
+      end
+
+      it 'updates status and custom fields of the device' do
+        device_tags.each do |t|
+          stub_request(:get, "#{Setting[:netbox_url]}/api/extras/tags/#{t['id']}/")
+            .to_return(
+              status: 200, headers: { 'Content-Type': 'application/json' },
+              body: { id: t['id'], name: t['name'], slug: t['slug'] }.to_json
+            )
+        end
+        stub_patch = stub_request(:patch, "#{Setting[:netbox_url]}/api/dcim/devices/#{device.id}/").with(
+          body: { status: 'planned', custom_fields: { owner_team: 'ops' } }.to_json
+        ).to_return(
+          status: 200, headers: { 'Content-Type': 'application/json' },
+          body: { id: 1 }.to_json
+        )
+
+        subject
+        assert_requested(stub_patch)
+      end
+    end
   end
 
   context 'if the host has been updated since the last synchronization' do

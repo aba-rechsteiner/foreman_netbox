@@ -54,8 +54,25 @@ Foreman::Plugin.register :foreman_netbox do
         description: N_('Megabytes per gigabyte used to send the disk size of virtual machines to Netbox, should match DISK_BASE_UNIT of Netbox'),
         collection: proc { { 1000 => _('1000 (GB)'), 1024 => _('1024 (GiB)') } }
       validates('netbox_disk_base_unit', ->(value) { [1000, 1024].include?(value) }, message: N_('Netbox disk base unit must be 1000 or 1024'))
+      setting 'netbox_periodic_sync',
+        type: :string,
+        default: 'disabled',
+        full_name: N_('Periodic synchronization'),
+        description: N_('Periodically synchronize hosts with changes, hosts that were never synchronized and hosts that failed to synchronize'),
+        collection: proc { { 'disabled' => _('Disabled'), 'hourly' => _('Hourly'), 'daily' => _('Daily') } }
+      validates('netbox_periodic_sync', ->(value) { %w[disabled hourly daily].include?(value) },
+        message: N_('Periodic synchronization must be disabled, hourly or daily'))
     end
   end
+
+  # the setting netbox_periodic_sync selects which of them synchronizes
+  Foreman::Cron.register(:hourly, 'foreman_netbox:sync:hourly')
+  Foreman::Cron.register(:daily, 'foreman_netbox:sync:daily')
+
+  security_block :foreman_netbox do
+    permission :netbox_sync_hosts, { 'api/v2/hosts': [:netbox_sync] }, resource_type: 'Host'
+  end
+  add_all_permissions_to_default_roles
 
   logger :import, enabled: true
 end

@@ -28,6 +28,7 @@ module ForemanNetbox
       ::Nic::Base.include(ForemanNetbox::Nic::BaseExtensions)
       ::User.include(ForemanNetbox::UserUsergroupCommonExtensions)
       ::Usergroup.include(ForemanNetbox::UserUsergroupCommonExtensions)
+      ::Api::V2::HostsController.prepend(ForemanNetbox::ApiHostsControllerExtensions)
     rescue StandardError => e
       Rails.logger.warn "ForemanNetbox: skipping engine hook (#{e})\n#{e.backtrace.join("\n")}"
     end

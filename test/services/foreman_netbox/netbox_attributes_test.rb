@@ -44,7 +44,7 @@ module ForemanNetbox
       let(:host) { FactoryBot.build_stubbed(:host, :managed) }
 
       let(:expected) do
-        { name: 'SERVER', color: '9e9e9e', slug: 'server' }
+        { name: 'SERVER', slug: 'server' }
       end
 
       it { assert_equal expected, host.netbox_facet.netbox_params.fetch(:device_role) }
@@ -312,6 +312,53 @@ module ForemanNetbox
         let(:compute_resource_type) { 'ForemanFogProxmox::Proxmox' }
 
         it { assert_equal({ name: 'Proxmox VE', slug: 'proxmox-ve' }, host.netbox_facet.netbox_params.fetch(:cluster_type)) }
+      end
+    end
+
+    describe 'with Foreman parameters' do
+      subject { host.netbox_facet.netbox_params }
+
+      let(:compute) { false }
+      let(:host) do
+        FactoryBot.build_stubbed(:host, :managed).tap do |host|
+          host.stubs(:compute?).returns(compute)
+          host.stubs(:compute_resource).returns(OpenStruct.new(type: 'Foreman::Model::Libvirt', name: 'hypervisor'))
+          host.stubs(:compute_object).returns(OpenStruct.new(cpus: 2, memory_size: 2_097_152, volumes: []))
+          host.stubs(:host_params).returns(
+            'netbox_tenant' => 'Tenant Name',
+            'netbox_site' => 'Site Name',
+            'netbox_device_role' => 'Hypervisor',
+            'netbox_device_type' => 'PowerEdge R650',
+            'netbox_manufacturer' => 'Dell',
+            'netbox_status' => 'planned',
+            'netbox_cluster' => 'Cluster Name',
+            'netbox_cluster_type' => 'KVM',
+            'netbox_cf_owner_team' => 'ops',
+            'netbox_cf_backup' => true,
+            'unrelated' => 'value'
+          )
+        end
+      end
+      let(:custom_fields) { { owner_team: 'ops', backup: true } }
+
+      it 'overrides the values of a device' do
+        assert_equal({ name: 'Tenant Name', slug: 'tenant-name' }, subject[:tenant])
+        assert_equal({ name: 'Site Name', slug: 'site-name' }, subject[:site])
+        assert_equal({ name: 'Hypervisor', slug: 'hypervisor' }, subject[:device_role])
+        assert_equal({ model: 'PowerEdge R650', slug: 'poweredge-r650' }, subject[:device_type])
+        assert_equal({ name: 'Dell', slug: 'dell' }, subject[:manufacturer])
+        assert_equal({ name: host.name, status: 'planned', custom_fields: custom_fields }, subject[:device])
+      end
+
+      context 'when the host is a virtual machine' do
+        let(:compute) { true }
+
+        it 'overrides the values of a virtual machine' do
+          assert_equal({ name: 'Tenant Name', slug: 'tenant-name' }, subject[:tenant])
+          assert_equal({ name: 'Cluster Name' }, subject[:cluster])
+          assert_equal({ name: 'KVM', slug: 'kvm' }, subject[:cluster_type])
+          assert_equal({ vcpus: 2, memory: 2048, name: host.name, status: 'planned', custom_fields: custom_fields }, subject[:virtual_machine])
+        end
       end
     end
   end

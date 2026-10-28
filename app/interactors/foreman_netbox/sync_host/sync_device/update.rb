@@ -8,7 +8,7 @@ module ForemanNetbox
         include ForemanNetbox::Concerns::PrimaryIps
         include ForemanNetbox::Concerns::AssignTags
 
-        ATTRIBUTES = %i[name role device_type primary_ip4 primary_ip6 site tenant serial].freeze
+        ATTRIBUTES = %i[name role device_type primary_ip4 primary_ip6 site tenant serial status custom_fields].freeze
 
         around do |interactor|
           interactor.call if context.device
@@ -77,6 +77,23 @@ module ForemanNetbox
           return if !new_serial || device.serial == new_serial
 
           device.serial = new_serial
+        end
+
+        def assign_status
+          new_status = new_device_params[:status]
+          return if !new_status || device['status']&.dig('value') == new_status
+
+          device.status = new_status
+        end
+
+        def assign_custom_fields
+          new_custom_fields = new_device_params[:custom_fields]
+          return if new_custom_fields.blank?
+
+          custom_fields = device['custom_fields'] || {}
+          return if new_custom_fields.all? { |name, value| custom_fields[name.to_s] == value }
+
+          device.custom_fields = new_custom_fields
         end
       end
     end
